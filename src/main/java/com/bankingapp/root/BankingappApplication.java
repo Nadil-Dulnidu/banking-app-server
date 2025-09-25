@@ -1,0 +1,14 @@
+package com.bankingapp.root;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
+
+@SpringBootApplication
+@EnableScheduling
+public class BankingappApplication {
+	public static void main(String[] args) {
+		SpringApplication.run(BankingappApplication.class, args);
+	}
+
+}

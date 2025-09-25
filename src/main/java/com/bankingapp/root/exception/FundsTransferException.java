@@ -1,0 +1,7 @@
+package com.bankingapp.root.exception;
+
+public class FundsTransferException extends RuntimeException {
+    public FundsTransferException(String message) {
+        super(message);
+    }
+}
