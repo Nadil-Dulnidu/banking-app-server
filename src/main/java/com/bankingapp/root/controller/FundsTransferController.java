@@ -6,12 +6,14 @@ import com.bankingapp.root.service.FundsTransferService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/transfer")
 @Validated
 public class FundsTransferController {
@@ -21,6 +23,7 @@ public class FundsTransferController {
         this.fundsTransferService = fundsTransferService;
     }
 
+    @PreAuthorize(Constants.CUSTOMER)
     @PostMapping()
     public ResponseEntity<FundsTransferDTO> createTransfer (
             @Valid
@@ -29,6 +32,7 @@ public class FundsTransferController {
         return ResponseEntity.ok().body(savedTransfer);
     }
 
+    @PreAuthorize(Constants.SUPPORT_STAFF)
     @GetMapping()
     public ResponseEntity<List<FundsTransferDTO>> getAllFundsTransfers(
             @RequestParam(required = false, value = "fromAccount") final String fromAccount,
@@ -38,6 +42,7 @@ public class FundsTransferController {
         return ResponseEntity.ok().body(transferDTOList);
     }
 
+    @PreAuthorize(Constants.CUSTOMER)
     @PutMapping()
     public ResponseEntity<FundsTransferDTO> updateTransfer (
             @Valid
@@ -46,6 +51,7 @@ public class FundsTransferController {
         return ResponseEntity.ok().body(savedTransfer);
     }
 
+    @PreAuthorize(Constants.STAFF_OR_CUSTOMER)
     @GetMapping("/{id}")
     public ResponseEntity<FundsTransferDTO> getFundsTransferById(
             @Valid
@@ -55,6 +61,7 @@ public class FundsTransferController {
         return ResponseEntity.ok().body(fundsTransferDTO);
     }
 
+    @PreAuthorize(Constants.STAFF_OR_CUSTOMER)
     @DeleteMapping("/{id}")
     public ResponseEntity<FundsTransferDTO> deleteFundsTransferById(
             @Valid
@@ -64,6 +71,7 @@ public class FundsTransferController {
         return ResponseEntity.ok().body(transferDTO);
     }
 
+    @PreAuthorize(Constants.CUSTOMER)
     @GetMapping("/account/{account}")
     public ResponseEntity<List<FundsTransferDTO>> getFundsTransfersByAccount(
             @PathVariable final String account,

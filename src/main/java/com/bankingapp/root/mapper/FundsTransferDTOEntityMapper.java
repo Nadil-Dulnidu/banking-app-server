@@ -21,7 +21,6 @@ public class FundsTransferDTOEntityMapper {
         return fundsTransferDTO;
     }
 
-
     public static FundsTransferEntity map(final FundsTransferDTO fundsTransferDTO) {
         if (fundsTransferDTO == null)
             throw new IllegalArgumentException("FundsTransferDTO cannot be null");

@@ -8,6 +8,7 @@ import com.bankingapp.root.exception.TransferNotFoundException;
 import com.bankingapp.root.mapper.FundsTransferDTOEntityMapper;
 import com.bankingapp.root.repository.FundsTransferRepository;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,18 +19,18 @@ import java.util.List;
 public class FundsTransferService {
     private final FundsTransferRepository fundsTransferRepository;
 
-    public FundsTransferService (FundsTransferRepository fundsTransferRepository) {
+    public FundsTransferService(FundsTransferRepository fundsTransferRepository) {
         this.fundsTransferRepository = fundsTransferRepository;
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public FundsTransferDTO createTransfer (final FundsTransferDTO fundsTransferDTO) {
-        if(fundsTransferRepository == null)
+    public FundsTransferDTO createTransfer(final FundsTransferDTO fundsTransferDTO) {
+        if (fundsTransferRepository == null)
             throw new FundsTransferException("FundsTransferRepository cannot be null");
         final FundsTransferEntity fundsTransferEntity = FundsTransferDTOEntityMapper.map(fundsTransferDTO);
-        if(fundsTransferDTO.getScheduledAt() != null){
+        if (fundsTransferDTO.getScheduledAt() != null) {
             fundsTransferEntity.setStatus(Constants.TransferStatus.PENDING);
-        }else{
+        } else {
             //check if both user back account exists
             //check sender back account has balance
             fundsTransferEntity.setStatus(Constants.TransferStatus.COMPLETED);
@@ -40,7 +41,7 @@ public class FundsTransferService {
         return FundsTransferDTOEntityMapper.map(fundsTransferEntity);
     }
 
-    public List<FundsTransferDTO> getAllTransfers (
+    public List<FundsTransferDTO> getAllTransfers(
             final String fromAccount,
             final String toAccount,
             final Constants.TransferStatus transferStatus
@@ -55,10 +56,9 @@ public class FundsTransferService {
                 .filter(transfer -> transferStatus == null || transferStatus.equals(transfer.getStatus()))
                 .toList();
         return fundsTransferDTOS;
-
     }
 
-    public List<FundsTransferDTO> getAllTransfersByFromAccount (
+    public List<FundsTransferDTO> getAllTransfersByFromAccount(
             final String fromAccount,
             final Constants.TransferStatus transferStatus
     ) {
@@ -70,8 +70,8 @@ public class FundsTransferService {
         return fundsTransferDTOS;
     }
 
-    public FundsTransferDTO getTransferById (final Integer transferId) {
-        if(transferId == null)
+    public FundsTransferDTO getTransferById(final Integer transferId) {
+        if (transferId == null)
             throw new FundsTransferException("Transfer id cannot be null");
         final FundsTransferEntity fundsTransferEntity = fundsTransferRepository.findById(transferId)
                 .orElseThrow(() -> new TransferNotFoundException("transfer not found with id: " + transferId));
@@ -79,12 +79,12 @@ public class FundsTransferService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public FundsTransferDTO updateTransfer (final FundsTransferDTO fundsTransferDTO) {
-        if(fundsTransferDTO == null)
+    public FundsTransferDTO updateTransfer(final FundsTransferDTO fundsTransferDTO) {
+        if (fundsTransferDTO == null)
             throw new FundsTransferException("fundsTransferDTO cannot be null");
-        if(fundsTransferDTO.getScheduledAt() == null)
+        if (fundsTransferDTO.getScheduledAt() == null)
             throw new FundsTransferException("Scheduled at cannot be null");
-        if(!fundsTransferDTO.getStatus().equals(Constants.TransferStatus.PENDING))
+        if (!fundsTransferDTO.getStatus().equals(Constants.TransferStatus.PENDING))
             throw new FundsTransferException("transfer status must be PENDING");
         final FundsTransferEntity fundsTransferEntity = fundsTransferRepository.findById(fundsTransferDTO.getId())
                 .orElseThrow(() -> new TransferNotFoundException("transfer not found with id: " + fundsTransferDTO.getId()));
@@ -95,12 +95,12 @@ public class FundsTransferService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public FundsTransferDTO deleteTransfer (final Integer transferId) {
-        if(transferId == null)
+    public FundsTransferDTO deleteTransfer(final Integer transferId) {
+        if (transferId == null)
             throw new FundsTransferException("transferId cannot be null");
         final FundsTransferEntity fundsTransferEntity = fundsTransferRepository.findById(transferId)
                 .orElseThrow(() -> new TransferNotFoundException("transfer not found with id: " + transferId));
-        if(!fundsTransferEntity.getStatus().equals(Constants.TransferStatus.PENDING))
+        if (!fundsTransferEntity.getStatus().equals(Constants.TransferStatus.PENDING))
             throw new FundsTransferException("Cannot Delete: transfer status must be PENDING");
         fundsTransferRepository.delete(fundsTransferEntity);
         return FundsTransferDTOEntityMapper.map(fundsTransferEntity);
@@ -114,8 +114,8 @@ public class FundsTransferService {
                 .stream()
                 .filter(transfer ->
                         transfer.getStatus() == Constants.TransferStatus.PENDING
-                        && transfer.getScheduledAt() != null
-                        && transfer.getScheduledAt().isBefore(nowTime))
+                                && transfer.getScheduledAt() != null
+                                && transfer.getScheduledAt().isBefore(nowTime))
                 .toList();
         for (FundsTransferEntity transfer : pendingTransfers) {
             // Check account balances

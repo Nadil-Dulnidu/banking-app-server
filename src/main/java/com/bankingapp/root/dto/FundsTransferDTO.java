@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FundsTransferDTO {
-
     @JsonProperty("transfer_id")
     private Integer id;
 
