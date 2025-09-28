@@ -28,9 +28,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         String path = request.getRequestURI();
         AntPathMatcher pathMatcher = new AntPathMatcher();
-        if (pathMatcher.match("/auth/**", path) ||
-                pathMatcher.match("/swagger-ui/**", path) ||
-                pathMatcher.match("/v3/api-docs/**", path)) {
+        if (pathMatcher.match("/auth/**", path)) {
             chain.doFilter(request, response);
             return;
         }
