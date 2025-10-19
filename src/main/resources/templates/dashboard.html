@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>trustWave - Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-university"></i>
+                    <h2>SecureBank</h2>
+                </div>
+            </div>
+            
+            <div class="user-profile">
+                <div class="profile-avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="profile-info">
+                    <h4 id="userName">John Doe</h4>
+                    <p id="userRole">Customer</p>
+                </div>
+            </div>
+            
+            <ul class="nav-menu">
+                <li class="nav-item active" data-section="overview">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Overview</span>
+                </li>
+                <li class="nav-item" data-section="accounts">
+                    <i class="fas fa-wallet"></i>
+                    <span>Accounts</span>
+                </li>
+                <li class="nav-item" data-section="transfers">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Transfers</span>
+                </li>
+                <li class="nav-item" data-section="bills">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <span>Bill Payments</span>
+                </li>
+                <li class="nav-item" data-section="profile">
+                    <i class="fas fa-user-cog"></i>
+                    <span>Profile</span>
+                </li>
+            </ul>
+            
+            <div class="sidebar-footer">
+                <button class="btn btn-secondary">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </nav>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="content-header">
+                <div class="header-left">
+                    <h1 id="pageTitle">Dashboard Overview</h1>
+                    <p id="pageSubtitle">Welcome back! Here's what's happening with your accounts.</p>
+                </div>
+                <div class="header-right">
+                    <div class="notifications">
+                        <button class="notification-btn">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-badge">3</span>
+                        </button>
+                    </div>
+                    <div class="quick-actions">
+                        <a href="transaction.html" class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Quick Transfer
+                        </a>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Content Sections -->
+            <div class="content-sections">
+                <!-- Overview Section -->
+                <section id="overview-section" class="content-section active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-wallet"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>$12,450.00</h3>
+                                <p>Total Balance</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-arrow-up"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>$2,340.00</h3>
+                                <p>This Month Income</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-arrow-down"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>$890.00</h3>
+                                <p>This Month Expenses</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>+12.5%</h3>
+                                <p>Savings Growth</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h3>Recent Transactions</h3>
+                                <button class="btn btn-link">View All</button>
+                            </div>
+                            <div class="transaction-list" id="recentTransactions">
+                                <!-- Transactions will be loaded here -->
+                            </div>
+                        </div>
+                        
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h3>Quick Actions</h3>
+                            </div>
+                            <div class="quick-actions-grid">
+                                <a href="transaction.html" class="quick-action-btn">
+                                    <i class="fas fa-exchange-alt"></i>
+                                    <span>Transfer Money</span>
+                                </a>
+                                <a href="pay-bill.html" class="quick-action-btn">
+                                    <i class="fas fa-file-invoice-dollar"></i>
+                                    <span>Pay Bills</span>
+                                </a>
+                                <a href="add-account.html" class="quick-action-btn">
+                                    <i class="fas fa-plus"></i>
+                                    <span>Open Account</span>
+                                </a>
+                                <button class="quick-action-btn">
+                                    <i class="fas fa-download"></i>
+                                    <span>Download Statement</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Accounts Section -->
+                <section id="accounts-section" class="content-section">
+                    <div class="section-header">
+                        <h2>Account Management</h2>
+                        <a href="add-account.html" class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Add Account
+                        </a>
+                    </div>
+                    
+                    <div class="accounts-grid" id="accountsGrid">
+                        <!-- Accounts will be loaded here -->
+                    </div>
+                </section>
+                
+                <!-- Transfers Section -->
+                <section id="transfers-section" class="content-section">
+                    <div class="section-header">
+                        <h2>Fund Transfers</h2>
+                        <a href="transaction.html" class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            New Transfer
+                        </a>
+                    </div>
+                    
+                    <div class="transfers-grid" id="transfersGrid">
+                        <!-- Transfers will be loaded here -->
+                    </div>
+                </section>
+                
+                <!-- Bills Section -->
+                <section id="bills-section" class="content-section">
+                    <div class="section-header">
+                        <h2>Bill Payments</h2>
+                        <a href="pay-bill.html" class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Pay Bill
+                        </a>
+                    </div>
+                    
+                    <div class="bills-grid" id="billsGrid">
+                        <!-- Bills will be loaded here -->
+                    </div>
+                </section>
+                
+                <!-- Profile Section -->
+                <section id="profile-section" class="content-section">
+                    <div class="section-header">
+                        <h2>Profile Management</h2>
+                    </div>
+                    
+                    <div class="profile-form-container">
+                        <form class="profile-form" id="profileForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="profileFirstName">First Name</label>
+                                    <div class="input-wrapper">
+                                        <i class="fas fa-user"></i>
+                                        <input type="text" id="profileFirstName" name="firstName" value="" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="profileLastName">Last Name</label>
+                                    <div class="input-wrapper">
+                                        <i class="fas fa-user"></i>
+                                        <input type="text" id="profileLastName" name="lastName" value="" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="profileEmail">Email Address</label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-envelope"></i>
+                                    <input type="email" id="profileEmail" name="email" value="" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="profilePhone">Phone Number</label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-phone"></i>
+                                    <input type="tel" id="profilePhone" name="phone" value="" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="profileAddress">Address</label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <textarea id="profileAddress" name="address" rows="3" required></textarea>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i>
+                                    <span>Update Profile</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+                
+                <!-- Settings Section -->
+                <section id="settings-section" class="content-section">
+                    <div class="section-header">
+                        <h2>Settings</h2>
+                    </div>
+                    
+                    <div class="settings-container">
+                        <div class="settings-card">
+                            <h3>Security Settings</h3>
+                            <div class="setting-item">
+                                <span>Two-Factor Authentication</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="setting-item">
+                                <span>Email Notifications</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="/js/dashboard.js"></script>
+    <script src="/js/animations.js"></script>
+</body>
+</html>

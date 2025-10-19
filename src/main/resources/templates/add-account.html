@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureBank - Add Account</title>
+    <link rel="stylesheet" href="../static/css/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-university"></i>
+                    <h2>SecureBank</h2>
+                </div>
+            </div>
+            
+            <div class="user-profile">
+                <div class="profile-avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="profile-info">
+                    <h4 id="userName">John Doe</h4>
+                    <p id="userRole">Customer</p>
+                </div>
+            </div>
+            
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="dashboard.html" class="nav-link">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item active">
+                    <i class="fas fa-wallet"></i>
+                    <span>Add Account</span>
+                </li>
+                <li class="nav-item">
+                    <a href="transaction.html" class="nav-link">
+                        <i class="fas fa-exchange-alt"></i>
+                        <span>Transfer Money</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="pay-bill.html" class="nav-link">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        <span>Pay Bills</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="dashboard.html#profile" class="nav-link">
+                        <i class="fas fa-user-cog"></i>
+                        <span>Profile</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="dashboard.html#settings" class="nav-link">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="sidebar-footer">
+                <button class="btn btn-secondary" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </nav>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="content-header">
+                <div class="header-left">
+                    <h1>Add New Account</h1>
+                    <p>Create a new bank account to manage your finances</p>
+                </div>
+                <div class="header-right">
+                    <a href="dashboard.html" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i>
+                        Back to Dashboard
+                    </a>
+                </div>
+            </header>
+            
+            <!-- Add Account Form -->
+            <div class="content-sections">
+                <section class="content-section active">
+                    <div class="form-container">
+                        <div class="form-card">
+                            <div class="form-header">
+                                <h2>Account Information</h2>
+                                <p>Please provide the details for your new account</p>
+                            </div>
+                            
+                            <form id="accountForm" class="account-form">
+                                <div class="form-group">
+                                    <label for="accountType">Account Type</label>
+                                    <select id="accountType" name="accountType" required>
+                                        <option value="">Select Account Type</option>
+                                        <option value="SAVINGS">Savings Account</option>
+                                        <option value="CHECKING">Checking Account</option>
+                                        <option value="BUSINESS">Business Account</option>
+                                        <option value="LOAN">Loan Account</option>
+                                    </select>
+                                    <div class="form-help">
+                                        <i class="fas fa-info-circle"></i>
+                                        <span>Choose the type of account that best fits your needs</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="initialBalance">Initial Balance</label>
+                                    <div class="input-wrapper">
+                                        <i class="fas fa-dollar-sign"></i>
+                                        <input type="number" id="initialBalance" name="initialBalance" step="0.01" value="0" placeholder="0.00">
+                                    </div>
+                                    <div class="form-help">
+                                        <i class="fas fa-info-circle"></i>
+                                        <span>Enter the amount you want to deposit initially (minimum $0)</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="accountName">Account Name (Optional)</label>
+                                    <input type="text" id="accountName" name="accountName" placeholder="e.g., My Savings, Emergency Fund">
+                                    <div class="form-help">
+                                        <i class="fas fa-info-circle"></i>
+                                        <span>Give your account a custom name for easy identification</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="checkbox-wrapper">
+                                        <input type="checkbox" id="termsAccepted" required>
+                                        <span class="checkmark"></span>
+                                        I agree to the <a href="#" class="link">Terms and Conditions</a> and <a href="#" class="link">Privacy Policy</a>
+                                    </label>
+                                </div>
+                                
+                                <div class="form-actions">
+                                    <a href="dashboard.html" class="btn btn-secondary">
+                                        <i class="fas fa-times"></i>
+                                        Cancel
+                                    </a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-plus"></i>
+                                        Create Account
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <!-- Account Benefits -->
+                        <div class="benefits-card">
+                            <h3>Account Benefits</h3>
+                            <div class="benefits-list">
+                                <div class="benefit-item">
+                                    <i class="fas fa-shield-alt"></i>
+                                    <div>
+                                        <h4>Bank-level Security</h4>
+                                        <p>Your funds are protected with advanced encryption</p>
+                                    </div>
+                                </div>
+                                <div class="benefit-item">
+                                    <i class="fas fa-mobile-alt"></i>
+                                    <div>
+                                        <h4>Mobile Banking</h4>
+                                        <p>Access your account anytime, anywhere</p>
+                                    </div>
+                                </div>
+                                <div class="benefit-item">
+                                    <i class="fas fa-chart-line"></i>
+                                    <div>
+                                        <h4>Interest Earnings</h4>
+                                        <p>Earn competitive interest on your savings</p>
+                                    </div>
+                                </div>
+                                <div class="benefit-item">
+                                    <i class="fas fa-headset"></i>
+                                    <div>
+                                        <h4>24/7 Support</h4>
+                                        <p>Get help whenever you need it</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+    
+    <script src="../static/js/dashboard.js"></script>
+    <script src="../static/js/animations.js"></script>
+    <script>
+        // Handle form submission
+        document.getElementById('accountForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const accountData = {
+                accountType: formData.get('accountType'),
+                initialBalance: parseFloat(formData.get('initialBalance')),
+                accountName: formData.get('accountName')
+            };
+            
+            // Show loading state
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
+            submitBtn.disabled = true;
+            
+            // Simulate API call
+            setTimeout(() => {
+                // Reset button
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+                
+                // Show success message
+                alert('Account created successfully! You will be redirected to the dashboard.');
+                
+                // Redirect to dashboard
+                window.location.href = 'dashboard.html';
+            }, 2000);
+        });
+        
+        // Handle account type change
+        document.getElementById('accountType').addEventListener('change', function() {
+            const initialBalance = document.getElementById('initialBalance');
+            const helpText = this.parentNode.querySelector('.form-help span');
+            
+            if (this.value === 'SAVINGS') {
+                helpText.textContent = 'Savings accounts earn interest and are great for long-term goals';
+            } else if (this.value === 'CHECKING') {
+                helpText.textContent = 'Checking accounts are perfect for daily transactions';
+            } else if (this.value === 'BUSINESS') {
+                helpText.textContent = 'Business accounts offer additional features for business needs';
+            } else if (this.value === 'LOAN') {
+                helpText.textContent = 'Loan accounts help you manage your borrowing needs';
+            }
+        });
+    </script>
+</body>
+</html>

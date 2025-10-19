@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrustWave - Admin Dashboard</title>
+    <link rel="stylesheet" href="../static/css/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-university"></i>
+                    <h2>TrustWave Admin</h2>
+                </div>
+            </div>
+            
+            <div class="user-profile">
+                <div class="profile-avatar">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <div class="profile-info">
+                    <h4 id="adminName">Admin User</h4>
+                    <p id="adminRole">System Administrator</p>
+                </div>
+            </div>
+            
+            <ul class="nav-menu">
+                <li class="nav-item active" data-section="overview">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Overview</span>
+                </li>
+                <li class="nav-item" data-section="users">
+                    <i class="fas fa-users"></i>
+                    <span>User Management</span>
+                </li>
+                <li class="nav-item" data-section="accounts">
+                    <i class="fas fa-wallet"></i>
+                    <span>Account Management</span>
+                </li>
+                <li class="nav-item" data-section="transactions">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Transaction Monitor</span>
+                </li>
+                <li class="nav-item" data-section="reports">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Reports & Analytics</span>
+                </li>
+                <li class="nav-item" data-section="security">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Security Center</span>
+                </li>
+                <li class="nav-item" data-section="system">
+                    <i class="fas fa-cogs"></i>
+                    <span>System Settings</span>
+                </li>
+                <li class="nav-item" data-section="audit">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Audit Logs</span>
+                </li>
+            </ul>
+            
+            <div class="sidebar-footer">
+                <button class="btn btn-secondary" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </nav>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="content-header">
+                <div class="header-left">
+                    <h1 id="pageTitle">Admin Overview</h1>
+                    <p id="pageSubtitle">System administration and monitoring dashboard.</p>
+                </div>
+                <div class="header-right">
+                    <div class="notifications">
+                        <button class="notification-btn">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-badge">5</span>
+                        </button>
+                    </div>
+                    <div class="quick-actions">
+                        <!-- Add User button removed -->
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Content Sections -->
+            <div class="content-sections">
+                <!-- Overview Section -->
+                <section id="overview-section" class="content-section active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>2,847</h3>
+                                <p>Total Users</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-wallet"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>15,432</h3>
+                                <p>Active Accounts</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-exchange-alt"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>8,945</h3>
+                                <p>Transactions Today</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>$2.4M</h3>
+                                <p>Total Volume</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h3>Recent System Activity</h3>
+                                <button class="btn btn-link">View All</button>
+                            </div>
+                            <div class="activity-list" id="recentActivity">
+                                <!-- Activity items will be loaded here -->
+                            </div>
+                        </div>
+                        
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h3>System Health</h3>
+                            </div>
+                            <div class="system-health">
+                                <div class="health-item">
+                                    <span class="health-label">Server Status</span>
+                                    <span class="health-status online">
+                                        <i class="fas fa-circle"></i>
+                                        Online
+                                    </span>
+                                </div>
+                                <div class="health-item">
+                                    <span class="health-label">Database</span>
+                                    <span class="health-status online">
+                                        <i class="fas fa-circle"></i>
+                                        Healthy
+                                    </span>
+                                </div>
+                                <div class="health-item">
+                                    <span class="health-label">API Response</span>
+                                    <span class="health-status online">
+                                        <i class="fas fa-circle"></i>
+                                        45ms
+                                    </span>
+                                </div>
+                                <div class="health-item">
+                                    <span class="health-label">Security Status</span>
+                                    <span class="health-status warning">
+                                        <i class="fas fa-circle"></i>
+                                        Monitoring
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- User Management Section -->
+                <section id="users-section" class="content-section">
+                    <div class="section-header">
+                        <h2>User Management</h2>
+                    </div>
+                    
+                    <div class="admin-controls">
+                        <div class="search-bar">
+                            <i class="fas fa-search"></i>
+                            <input type="text" placeholder="Search users..." id="userSearch">
+                        </div>
+                        <div class="filter-controls">
+                            <select id="roleFilter">
+                                <option value="">All Roles</option>
+                                <option value="CUSTOMER">Customer</option>
+                                <option value="ADMIN">Admin</option>
+                                <option value="BANK_EMPLOYEE">Bank Employee</option>
+                                <option value="SUPPORT_STAFF">Support Staff</option>
+                            </select>
+                            <select id="statusFilter">
+                                <option value="">All Status</option>
+                                <option value="ACTIVE">Active</option>
+                                <option value="SUSPENDED">Suspended</option>
+                                <option value="PENDING">Pending</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="users-table-container">
+                        <table class="admin-table" id="usersTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Username</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Last Login</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <!-- Users will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+                
+                <!-- Account Management Section -->
+                <section id="accounts-section" class="content-section">
+                    <div class="section-header">
+                        <h2>Account Management</h2>
+                    </div>
+                    
+                    <div class="admin-controls">
+                        <div class="search-bar">
+                            <i class="fas fa-search"></i>
+                            <input type="text" placeholder="Search accounts..." id="accountSearch">
+                        </div>
+                        <div class="filter-controls">
+                            <select id="accountTypeFilter">
+                                <option value="">All Types</option>
+                                <option value="SAVINGS">Savings</option>
+                                <option value="CHECKING">Checking</option>
+                                <option value="BUSINESS">Business</option>
+                                <option value="LOAN">Loan</option>
+                            </select>
+                            <select id="accountStatusFilter">
+                                <option value="">All Status</option>
+                                <option value="ACTIVE">Active</option>
+                                <option value="SUSPENDED">Suspended</option>
+                                <option value="CLOSED">Closed</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="accounts-table-container">
+                        <table class="admin-table" id="accountsTable">
+                            <thead>
+                                <tr>
+                                    <th>Account ID</th>
+                                    <th>Account Number</th>
+                                    <th>Account Type</th>
+                                    <th>Owner</th>
+                                    <th>Balance</th>
+                                    <th>Status</th>
+                                    <th>Created Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="accountsTableBody">
+                                <!-- Accounts will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+                
+                <!-- Transaction Monitor Section -->
+                <section id="transactions-section" class="content-section">
+                    <div class="section-header">
+                        <h2>Transaction Monitor</h2>
+                        <div class="section-actions">
+                            <button class="btn btn-secondary" onclick="exportTransactions()">
+                                <i class="fas fa-download"></i>
+                                Export
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="admin-controls">
+                        <div class="search-bar">
+                            <i class="fas fa-search"></i>
+                            <input type="text" placeholder="Search transactions..." id="transactionSearch">
+                        </div>
+                        <div class="filter-controls">
+                            <select id="transactionStatusFilter">
+                                <option value="">All Status</option>
+                                <option value="PENDING">Pending</option>
+                                <option value="COMPLETED">Completed</option>
+                                <option value="FAILED">Failed</option>
+                                <option value="CANCELLED">Cancelled</option>
+                            </select>
+                            <select id="transactionTypeFilter">
+                                <option value="">All Types</option>
+                                <option value="INTRA_BANK">Intra Bank</option>
+                                <option value="INTER_BANK">Inter Bank</option>
+                            </select>
+                            <input type="date" id="dateFilter" placeholder="Filter by date">
+                        </div>
+                    </div>
+                    
+                    <div class="transactions-table-container">
+                        <table class="admin-table" id="transactionsTable">
+                            <thead>
+                                <tr>
+                                    <th>Transaction ID</th>
+                                    <th>From Account</th>
+                                    <th>To Account</th>
+                                    <th>Amount</th>
+                                    <th>Type</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactionsTableBody">
+                                <!-- Transactions will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+                
+                <!-- Reports & Analytics Section -->
+                <section id="reports-section" class="content-section">
+                    <div class="section-header">
+                        <h2>Reports & Analytics</h2>
+                        <button class="btn btn-primary" onclick="generateReport()">
+                            <i class="fas fa-chart-line"></i>
+                            Generate Report
+                        </button>
+                    </div>
+                    
+                    <div class="reports-grid">
+                        <div class="report-card">
+                            <div class="report-header">
+                                <h3>Daily Transactions</h3>
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="report-chart" id="dailyTransactionsChart">
+                                <!-- Chart will be rendered here -->
+                            </div>
+                        </div>
+                        
+                        <div class="report-card">
+                            <div class="report-header">
+                                <h3>User Growth</h3>
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="report-chart" id="userGrowthChart">
+                                <!-- Chart will be rendered here -->
+                            </div>
+                        </div>
+                        
+                        <div class="report-card">
+                            <div class="report-header">
+                                <h3>Account Types Distribution</h3>
+                                <i class="fas fa-pie-chart"></i>
+                            </div>
+                            <div class="report-chart" id="accountTypesChart">
+                                <!-- Chart will be rendered here -->
+                            </div>
+                        </div>
+                        
+                        <div class="report-card">
+                            <div class="report-header">
+                                <h3>Revenue Analysis</h3>
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <div class="report-chart" id="revenueChart">
+                                <!-- Chart will be rendered here -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Security Center Section -->
+                <section id="security-section" class="content-section">
+                    <div class="section-header">
+                        <h2>Security Center</h2>
+                        <button class="btn btn-warning" onclick="runSecurityScan()">
+                            <i class="fas fa-shield-alt"></i>
+                            Run Security Scan
+                        </button>
+                    </div>
+                    
+                    <div class="security-grid">
+                        <div class="security-card">
+                            <div class="security-header">
+                                <h3>Failed Login Attempts</h3>
+                                <span class="security-badge high">High Risk</span>
+                            </div>
+                            <div class="security-content">
+                                <div class="security-item">
+                                    <span class="security-label">Last 24 Hours</span>
+                                    <span class="security-value">23</span>
+                                </div>
+                                <div class="security-item">
+                                    <span class="security-label">Blocked IPs</span>
+                                    <span class="security-value">5</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="security-card">
+                            <div class="security-header">
+                                <h3>Suspicious Transactions</h3>
+                                <span class="security-badge medium">Medium Risk</span>
+                            </div>
+                            <div class="security-content">
+                                <div class="security-item">
+                                    <span class="security-label">Flagged Today</span>
+                                    <span class="security-value">7</span>
+                                </div>
+                                <div class="security-item">
+                                    <span class="security-label">Under Review</span>
+                                    <span class="security-value">3</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="security-card">
+                            <div class="security-header">
+                                <h3>System Vulnerabilities</h3>
+                                <span class="security-badge low">Low Risk</span>
+                            </div>
+                            <div class="security-content">
+                                <div class="security-item">
+                                    <span class="security-label">Critical</span>
+                                    <span class="security-value">0</span>
+                                </div>
+                                <div class="security-item">
+                                    <span class="security-label">High</span>
+                                    <span class="security-value">2</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="security-logs">
+                        <h3>Recent Security Events</h3>
+                        <div class="security-log-list" id="securityLogs">
+                            <!-- Security logs will be loaded here -->
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- System Settings Section -->
+                <section id="system-section" class="content-section">
+                    <div class="section-header">
+                        <h2>System Settings</h2>
+                    </div>
+                    
+                    <div class="settings-grid">
+                        <div class="settings-card">
+                            <h3>General Settings</h3>
+                            <div class="setting-item">
+                                <span>Maintenance Mode</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="maintenanceMode">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="setting-item">
+                                <span>Auto Backup</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="setting-item">
+                                <span>Email Notifications</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-card">
+                            <h3>Security Settings</h3>
+                            <div class="setting-item">
+                                <span>Two-Factor Authentication</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="setting-item">
+                                <span>Password Complexity</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="setting-item">
+                                <span>Session Timeout</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-card">
+                            <h3>Transaction Limits</h3>
+                            <div class="setting-item">
+                                <span>Daily Transfer Limit</span>
+                                <input type="number" value="10000" class="setting-input">
+                            </div>
+                            <div class="setting-item">
+                                <span>Monthly Transfer Limit</span>
+                                <input type="number" value="50000" class="setting-input">
+                            </div>
+                            <div class="setting-item">
+                                <span>Max Transaction Amount</span>
+                                <input type="number" value="25000" class="setting-input">
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Audit Logs Section -->
+                <section id="audit-section" class="content-section">
+                    <div class="section-header">
+                        <h2>Audit Logs</h2>
+                        <button class="btn btn-secondary" onclick="exportAuditLogs()">
+                            <i class="fas fa-download"></i>
+                            Export Logs
+                        </button>
+                    </div>
+                    
+                    <div class="admin-controls">
+                        <div class="search-bar">
+                            <i class="fas fa-search"></i>
+                            <input type="text" placeholder="Search audit logs..." id="auditSearch">
+                        </div>
+                        <div class="filter-controls">
+                            <select id="auditLevelFilter">
+                                <option value="">All Levels</option>
+                                <option value="INFO">Info</option>
+                                <option value="WARN">Warning</option>
+                                <option value="ERROR">Error</option>
+                                <option value="CRITICAL">Critical</option>
+                            </select>
+                            <select id="auditActionFilter">
+                                <option value="">All Actions</option>
+                                <option value="LOGIN">Login</option>
+                                <option value="LOGOUT">Logout</option>
+                                <option value="CREATE">Create</option>
+                                <option value="UPDATE">Update</option>
+                                <option value="DELETE">Delete</option>
+                            </select>
+                            <input type="date" id="auditDateFilter" placeholder="Filter by date">
+                        </div>
+                    </div>
+                    
+                    <div class="audit-logs-container">
+                        <table class="admin-table" id="auditLogsTable">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>User</th>
+                                    <th>Action</th>
+                                    <th>Level</th>
+                                    <th>Details</th>
+                                    <th>IP Address</th>
+                                </tr>
+                            </thead>
+                            <tbody id="auditLogsTableBody">
+                                <!-- Audit logs will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Modals -->
+    <div id="modalOverlay" class="modal-overlay">
+    </div>
+    
+    <script src="../static/js/admin-dashboard.js"></script>
+    <script src="../static/js/animations.js"></script>
+</body>
+</html>

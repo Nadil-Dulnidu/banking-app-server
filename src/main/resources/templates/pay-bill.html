@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureBank - Pay Bill</title>
+    <link rel="stylesheet" href="../static/css/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-university"></i>
+                    <h2>SecureBank</h2>
+                </div>
+            </div>
+            
+            <div class="user-profile">
+                <div class="profile-avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="profile-info">
+                    <h4 id="userName">John Doe</h4>
+                    <p id="userRole">Customer</p>
+                </div>
+            </div>
+            
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="dashboard.html" class="nav-link">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="add-account.html" class="nav-link">
+                        <i class="fas fa-wallet"></i>
+                        <span>Add Account</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="transaction.html" class="nav-link">
+                        <i class="fas fa-exchange-alt"></i>
+                        <span>Transfer Money</span>
+                    </a>
+                </li>
+                <li class="nav-item active">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <span>Pay Bills</span>
+                </li>
+                <li class="nav-item">
+                    <a href="dashboard.html#profile" class="nav-link">
+                        <i class="fas fa-user-cog"></i>
+                        <span>Profile</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="dashboard.html#settings" class="nav-link">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="sidebar-footer">
+                <button class="btn btn-secondary" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </nav>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="content-header">
+                <div class="header-left">
+                    <h1>Pay Bills</h1>
+                    <p>Pay your bills quickly and securely online</p>
+                </div>
+                <div class="header-right">
+                    <a href="dashboard.html" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i>
+                        Back to Dashboard
+                    </a>
+                </div>
+            </header>
+            
+            <!-- Bill Payment Form -->
+            <div class="content-sections">
+                <section class="content-section active">
+                    <div class="form-container">
+                        <div class="form-card">
+                            <div class="form-header">
+                                <h2>Bill Payment Details</h2>
+                                <p>Enter the bill information to make a payment</p>
+                            </div>
+                            
+                            <form id="billPaymentForm" class="bill-payment-form">
+                                <div class="form-group">
+                                    <label for="billerName">Biller Name</label>
+                                    <select id="billerName" name="billerName" required>
+                                        <option value="">Select Biller</option>
+                                        <option value="Electric Company">Electric Company</option>
+                                        <option value="Water Department">Water Department</option>
+                                        <option value="Gas Company">Gas Company</option>
+                                        <option value="Internet Provider">Internet Provider</option>
+                                        <option value="Phone Company">Phone Company</option>
+                                        <option value="Credit Card">Credit Card</option>
+                                        <option value="Insurance">Insurance</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                    <div class="form-help">
+                                        <i class="fas fa-info-circle"></i>
+                                        <span>Select the company you want to pay</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group" id="customBillerGroup" style="display: none;">
+                                    <label for="customBillerName">Custom Biller Name</label>
+                                    <input type="text" id="customBillerName" name="customBillerName" placeholder="Enter biller name">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="billAmount">Bill Amount</label>
+                                    <div class="input-wrapper">
+                                        <i class="fas fa-dollar-sign"></i>
+                                        <input type="number" id="billAmount" name="amount" step="0.01" placeholder="0.00" required>
+                                    </div>
+                                    <div class="form-help">
+                                        <i class="fas fa-info-circle"></i>
+                                        <span>Enter the amount you want to pay</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="billAccount">From Account</label>
+                                    <select id="billAccount" name="accountId" required>
+                                        <option value="">Select Account</option>
+                                        <option value="1234567890">Savings Account - ****7890</option>
+                                        <option value="0987654321">Checking Account - ****4321</option>
+                                    </select>
+                                    <div class="form-help">
+                                        <i class="fas fa-info-circle"></i>
+                                        <span>Choose the account to pay from</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="paymentFrequency">Payment Frequency</label>
+                                    <select id="paymentFrequency" name="paymentFrequency" required>
+                                        <option value="ONE_TIME">One Time Payment</option>
+                                        <option value="MONTHLY">Monthly Recurring</option>
+                                    </select>
+                                    <div class="form-help">
+                                        <i class="fas fa-info-circle"></i>
+                                        <span>Choose between one-time or recurring payment</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="billReference">Bill Reference Number (Optional)</label>
+                                    <input type="text" id="billReference" name="billReference" placeholder="Enter reference number if available">
+                                    <div class="form-help">
+                                        <i class="fas fa-info-circle"></i>
+                                        <span>Enter the reference number from your bill</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="paymentDate">Payment Date</label>
+                                    <input type="date" id="paymentDate" name="paymentDate" required>
+                                    <div class="form-help">
+                                        <i class="fas fa-info-circle"></i>
+                                        <span>Select when you want to make the payment</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="checkbox-wrapper">
+                                        <input type="checkbox" id="termsAccepted" required>
+                                        <span class="checkmark"></span>
+                                        I confirm that the bill payment details are correct and I agree to the <a href="#" class="link">Terms and Conditions</a>
+                                    </label>
+                                </div>
+                                
+                                <div class="form-actions">
+                                    <a href="dashboard.html" class="btn btn-secondary">
+                                        <i class="fas fa-times"></i>
+                                        Cancel
+                                    </a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-credit-card"></i>
+                                        Pay Bill
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <!-- Bill Payment Information -->
+                        <div class="info-card">
+                            <h3>Bill Payment Information</h3>
+                            <div class="info-list">
+                                <div class="info-item">
+                                    <i class="fas fa-clock"></i>
+                                    <div>
+                                        <h4>Processing Time</h4>
+                                        <p>Most payments: 1-2 business days<br>Some utilities: 3-5 business days</p>
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <i class="fas fa-shield-alt"></i>
+                                    <div>
+                                        <h4>Security</h4>
+                                        <p>All payments are secure and encrypted</p>
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <i class="fas fa-dollar-sign"></i>
+                                    <div>
+                                        <h4>Fees</h4>
+                                        <p>Most bill payments: Free<br>Some services: $1.50 fee</p>
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <div>
+                                        <h4>Recurring Payments</h4>
+                                        <p>Set up automatic monthly payments</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+    
+    <script src="../static/js/dashboard.js"></script>
+    <script src="../static/js/animations.js"></script>
+    <script>
+        // Handle form submission
+        document.getElementById('billPaymentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const billData = {
+                billerName: formData.get('billerName'),
+                customBillerName: formData.get('customBillerName'),
+                amount: parseFloat(formData.get('amount')),
+                accountId: formData.get('accountId'),
+                paymentFrequency: formData.get('paymentFrequency'),
+                billReference: formData.get('billReference'),
+                paymentDate: formData.get('paymentDate')
+            };
+            
+            // Validate amount
+            if (billData.amount <= 0) {
+                alert('Please enter a valid amount greater than $0');
+                return;
+            }
+            
+            // Show loading state
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing Payment...';
+            submitBtn.disabled = true;
+            
+            // Simulate API call
+            setTimeout(() => {
+                // Reset button
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+                
+                // Show success message
+                const billerName = billData.billerName === 'Other' ? billData.customBillerName : billData.billerName;
+                alert(`Bill payment of $${billData.amount} to ${billerName} has been scheduled successfully!`);
+                
+                // Redirect to dashboard
+                window.location.href = 'dashboard.html';
+            }, 2000);
+        });
+        
+        // Handle biller selection
+        document.getElementById('billerName').addEventListener('change', function() {
+            const customBillerGroup = document.getElementById('customBillerGroup');
+            const customBillerInput = document.getElementById('customBillerName');
+            
+            if (this.value === 'Other') {
+                customBillerGroup.style.display = 'block';
+                customBillerInput.required = true;
+            } else {
+                customBillerGroup.style.display = 'none';
+                customBillerInput.required = false;
+                customBillerInput.value = '';
+            }
+        });
+        
+        // Handle payment frequency change
+        document.getElementById('paymentFrequency').addEventListener('change', function() {
+            const helpText = this.parentNode.querySelector('.form-help span');
+            
+            if (this.value === 'ONE_TIME') {
+                helpText.textContent = 'Make a one-time payment for this bill';
+            } else if (this.value === 'MONTHLY') {
+                helpText.textContent = 'Set up automatic monthly payments for this bill';
+            }
+        });
+        
+        // Set default payment date to today
+        document.getElementById('paymentDate').valueAsDate = new Date();
+        
+        // Format amount input
+        document.getElementById('billAmount').addEventListener('input', function() {
+            let value = this.value;
+            if (value && !isNaN(value)) {
+                // Format to 2 decimal places
+                this.value = parseFloat(value).toFixed(2);
+            }
+        });
+    </script>
+</body>
+</html>

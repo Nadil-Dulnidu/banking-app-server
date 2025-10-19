@@ -4,18 +4,12 @@ import com.bankingapp.root.dto.AuthRequestDTO;
 import com.bankingapp.root.dto.UserDTO;
 import com.bankingapp.root.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
-
-@RestController
+@Controller
 @RequestMapping("/auth")
-@Validated
 public class AuthController {
     private final AuthService authService;
 
@@ -23,25 +17,40 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @PostMapping(value = "/register")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody UserDTO userDTO) {
-        final UserDTO registeredUser = authService.registerUser(userDTO);
-        return ResponseEntity.ok(registeredUser);
+    @PostMapping("/register")
+    public String registerUser(@ModelAttribute("userDTO") UserDTO userDTO) {
+        System.out.println(userDTO);
+        authService.registerUser(userDTO);
+        return "redirect:/auth/loginForm";
     }
 
-    @PostMapping(value = "/login")
-    public ResponseEntity<?> loginUser(
-            @Valid @RequestBody final AuthRequestDTO authRequest,
-            HttpServletResponse response) {
-        final String token = authService.loginUser(authRequest, response);
-        final Map<String, String> body = new HashMap<>();
-        body.put("accessToken", token);
-        return ResponseEntity.ok(body);
+    @PostMapping("/login")
+    public String loginUser(Model model,
+            @ModelAttribute("authRequestDTO") AuthRequestDTO authRequest,
+            HttpServletRequest request) {
+        System.out.println(authRequest.getPassword());
+        model.addAttribute("authRequestDTO", authRequest);
+        authService.login(authRequest, request);
+        return "redirect:/";
     }
 
-    @GetMapping(value = "/refresh")
-    public ResponseEntity<Map<String, String>> refreshToken(HttpServletRequest request) {
-        final Map<String,String> token = authService.refreshToken(request);
-        return ResponseEntity.ok(token);
+    @PostMapping("/logout")
+    public String logout(HttpServletRequest request) {
+        request.getSession().invalidate();
+        return "redirect:/";
+    }
+
+    @GetMapping("/loginForm")
+    public String loginForm(Model model) {
+        AuthRequestDTO authRequestDTO = new AuthRequestDTO();
+        model.addAttribute("authRequestDTO", authRequestDTO);
+        return "login";
+    }
+
+    @GetMapping("/registerForm")
+    public String registerForm(Model model) {
+        UserDTO userDTO = new UserDTO();
+        model.addAttribute("userDTO", userDTO);
+        return "register";
     }
 }

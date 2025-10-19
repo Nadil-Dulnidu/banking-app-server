@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrustWave - Your Trusted Financial Partner</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" th:href="@{/css/home.css}" >
+    <link th:href="@{https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css}" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <i class="fas fa-university"></i>
+                    <span>TrustWave</span>
+                </div>
+                
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="#home" class="nav-link">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#services" class="nav-link">Services</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#about" class="nav-link">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#contact" class="nav-link">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a th:href="@{/auth/loginForm}" class="nav-link nav-login">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a th:href="@{/auth/registerForm}" class="nav-link nav-register">Sign Up</a>
+                    </li>
+                </ul>
+                
+                <div class="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-background">
+            <div class="hero-overlay"></div>
+        </div>
+        
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">
+                    Your Financial Future Starts Here
+                </h1>
+                <p class="hero-subtitle">
+                    Experience banking reimagined with TrustWaveBank. Secure, smart, and simple financial solutions designed for your success.
+                </p>
+                <div class="hero-buttons">
+                    <a href="register.html" class="btn btn-primary btn-large">
+                        <i class="fas fa-user-plus"></i>
+                        Get Started Today
+                    </a>
+                    <a href="#services" class="btn btn-secondary btn-large">
+                        <i class="fas fa-info-circle"></i>
+                        Learn More
+                    </a>
+                </div>
+            </div>
+            
+            <div class="hero-image">
+                <div class="banking-illustration">
+                    <div class="card-stack">
+                        <div class="card card-1"></div>
+                        <div class="card card-2"></div>
+                        <div class="card card-3"></div>
+                    </div>
+                    <div class="money-flow">
+                        <div class="coin coin-1"></div>
+                        <div class="coin coin-2"></div>
+                        <div class="coin coin-3"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="scroll-indicator">
+            <div class="scroll-arrow">
+                <i class="fas fa-chevron-down"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Why Choose SecureBank?</h2>
+                <p class="section-subtitle">We provide comprehensive financial solutions with cutting-edge security and exceptional service.</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Bank-Level Security</h3>
+                    <p class="feature-description">Advanced encryption and multi-factor authentication protect your financial data 24/7.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Mobile Banking</h3>
+                    <p class="feature-description">Bank anywhere, anytime with our intuitive mobile app and responsive web platform.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3 class="feature-title">24/7 Support</h3>
+                    <p class="feature-description">Round-the-clock customer support to assist you whenever you need help.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Instant Transfers</h3>
+                    <p class="feature-description">Send money instantly between accounts with our lightning-fast transfer system.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="feature-title">Smart Analytics</h3>
+                    <p class="feature-description">Track your spending patterns and get insights to improve your financial health.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                    <h3 class="feature-title">Digital Cards</h3>
+                    <p class="feature-description">Virtual and physical cards with advanced fraud protection and spending controls.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Our Services</h2>
+                <p class="section-subtitle">Comprehensive financial solutions tailored to meet your unique needs.</p>
+            </div>
+            
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-image">
+                        <i class="fas fa-piggy-bank"></i>
+                    </div>
+                    <div class="service-content">
+                        <h3 class="service-title">Savings Accounts</h3>
+                        <p class="service-description">High-yield savings accounts with competitive interest rates to help your money grow.</p>
+                        <ul class="service-features">
+                            <li><i class="fas fa-check"></i> Competitive interest rates</li>
+                            <li><i class="fas fa-check"></i> No monthly fees</li>
+                            <li><i class="fas fa-check"></i> Online account management</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-image">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                    <div class="service-content">
+                        <h3 class="service-title">Checking Accounts</h3>
+                        <p class="service-description">Flexible checking accounts with unlimited transactions and premium features.</p>
+                        <ul class="service-features">
+                            <li><i class="fas fa-check"></i> Unlimited transactions</li>
+                            <li><i class="fas fa-check"></i> Free debit card</li>
+                            <li><i class="fas fa-check"></i> Mobile check deposit</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-image">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <div class="service-content">
+                        <h3 class="service-title">Business Banking</h3>
+                        <p class="service-description">Comprehensive business solutions designed for entrepreneurs and companies.</p>
+                        <ul class="service-features">
+                            <li><i class="fas fa-check"></i> Business accounts</li>
+                            <li><i class="fas fa-check"></i> Merchant services</li>
+                            <li><i class="fas fa-check"></i> Business loans</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-image">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <div class="service-content">
+                        <h3 class="service-title">Home Loans</h3>
+                        <p class="service-description">Affordable home loans with flexible terms and competitive interest rates.</p>
+                        <ul class="service-features">
+                            <li><i class="fas fa-check"></i> Low interest rates</li>
+                            <li><i class="fas fa-check"></i> Flexible terms</li>
+                            <li><i class="fas fa-check"></i> Quick approval</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-image">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                    </div>
+                    <div class="service-content">
+                        <h3 class="service-title">Bill Payment</h3>
+                        <p class="service-description">Convenient bill payment services with automatic scheduling and reminders.</p>
+                        <ul class="service-features">
+                            <li><i class="fas fa-check"></i> Automatic payments</li>
+                            <li><i class="fas fa-check"></i> Payment reminders</li>
+                            <li><i class="fas fa-check"></i> Multiple payment methods</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-image">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
+                    <div class="service-content">
+                        <h3 class="service-title">Money Transfer</h3>
+                        <p class="service-description">Fast and secure money transfer services for domestic and international transactions.</p>
+                        <ul class="service-features">
+                            <li><i class="fas fa-check"></i> Instant transfers</li>
+                            <li><i class="fas fa-check"></i> International transfers</li>
+                            <li><i class="fas fa-check"></i> Low fees</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number" data-target="500000">0</div>
+                    <div class="stat-label">Happy Customers</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" data-target="50">0</div>
+                    <div class="stat-label">Years of Experience</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" data-target="1000">0</div>
+                    <div class="stat-label">Branches Worldwide</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" data-target="99">0</div>
+                    <div class="stat-label">Customer Satisfaction %</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-text">
+                    <h2 class="section-title">About TrustWave</h2>
+                    <p class="about-description">
+                        Founded in 1974, SecureBank has been a trusted financial partner for millions of customers worldwide. 
+                        We combine traditional banking values with innovative technology to provide secure, efficient, and 
+                        customer-focused financial services.
+                    </p>
+                    <p class="about-description">
+                        Our mission is to empower individuals and businesses to achieve their financial goals through 
+                        accessible, transparent, and reliable banking solutions. With cutting-edge security measures and 
+                        a commitment to excellence, we ensure your financial future is in safe hands.
+                    </p>
+                    <div class="about-features">
+                        <div class="about-feature">
+                            <i class="fas fa-award"></i>
+                            <span>Award-Winning Service</span>
+                        </div>
+                        <div class="about-feature">
+                            <i class="fas fa-globe"></i>
+                            <span>Global Presence</span>
+                        </div>
+                        <div class="about-feature">
+                            <i class="fas fa-users"></i>
+                            <span>Expert Team</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-image">
+                    <div class="about-illustration">
+                        <div class="building-icon">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <div class="trust-badges">
+                            <div class="badge">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>FDIC Insured</span>
+                            </div>
+                            <div class="badge">
+                                <i class="fas fa-lock"></i>
+                                <span>256-bit SSL</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Get in Touch</h2>
+                <p class="section-subtitle">Have questions? We're here to help you with all your banking needs.</p>
+            </div>
+            
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h4>Phone</h4>
+                            <p>1-800-SECURE-BANK</p>
+                            <span>24/7 Customer Support</span>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h4>Email</h4>
+                            <p>support@securebank.com</p>
+                            <span>We'll respond within 24 hours</span>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h4>Visit Us</h4>
+                            <p>123 Financial District</p>
+                            <span>New York, NY 10004</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="contact-form">
+                    <form class="form">
+                        <div class="form-group">
+                            <input type="text" placeholder="Your Name" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" placeholder="Your Email" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" placeholder="Subject" required>
+                        </div>
+                        <div class="form-group">
+                            <textarea placeholder="Your Message" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i>
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <i class="fas fa-university"></i>
+                        <span>SecureBank</span>
+                    </div>
+                    <p class="footer-description">
+                        Your trusted financial partner for over 50 years. Secure, reliable, and innovative banking solutions.
+                    </p>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4 class="footer-title">Services</h4>
+                    <ul class="footer-links">
+                        <li><a href="#services">Personal Banking</a></li>
+                        <li><a href="#services">Business Banking</a></li>
+                        <li><a href="#services">Loans</a></li>
+                        <li><a href="#services">Investment</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4 class="footer-title">Support</h4>
+                    <ul class="footer-links">
+                        <li><a href="#contact">Contact Us</a></li>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Security</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4 class="footer-title">Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="login.html">Login</a></li>
+                        <li><a href="register.html">Sign Up</a></li>
+                        <li><a href="#about">About Us</a></li>
+                        <li><a href="#contact">Locations</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 SecureBank. All rights reserved. | FDIC Insured | Equal Housing Lender</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/home-animations.js"></script>
+</body>
+</html>

@@ -9,7 +9,9 @@ public class FundsTransferDTOEntityMapper {
             throw new IllegalArgumentException("FundsTransferEntity cannot be null");
         final FundsTransferDTO fundsTransferDTO = new FundsTransferDTO();
         fundsTransferDTO.setId(fundsTransferEntity.getId());
-        fundsTransferDTO.setFromAccount(fundsTransferEntity.getFromAccount());
+        if(fundsTransferEntity.getAccount() == null)
+            throw new IllegalArgumentException("Account cannot be null");
+        fundsTransferDTO.setFromAccount(fundsTransferEntity.getAccount().getAccountNumber());
         fundsTransferDTO.setToAccount(fundsTransferEntity.getToAccount());
         fundsTransferDTO.setBeneficiaryName(fundsTransferEntity.getBeneficiaryName());
         fundsTransferDTO.setAmount(fundsTransferEntity.getAmount());
@@ -25,7 +27,6 @@ public class FundsTransferDTOEntityMapper {
         if (fundsTransferDTO == null)
             throw new IllegalArgumentException("FundsTransferDTO cannot be null");
         final FundsTransferEntity fundsTransferEntity = new FundsTransferEntity();
-        fundsTransferEntity.setFromAccount(fundsTransferDTO.getFromAccount());
         fundsTransferEntity.setToAccount(fundsTransferDTO.getToAccount());
         fundsTransferEntity.setAmount(fundsTransferDTO.getAmount());
         fundsTransferEntity.setDescription(fundsTransferDTO.getDescription());

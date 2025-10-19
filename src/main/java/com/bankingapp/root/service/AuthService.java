@@ -1,54 +1,35 @@
 package com.bankingapp.root.service;
 
-import com.bankingapp.root.common.Constants;
 import com.bankingapp.root.dto.AuthRequestDTO;
 import com.bankingapp.root.dto.UserDTO;
-import com.bankingapp.root.entity.CustomerAddressEntity;
-import com.bankingapp.root.entity.CustomerEntity;
-import com.bankingapp.root.entity.EmployeeEntity;
 import com.bankingapp.root.entity.UserEntity;
 import com.bankingapp.root.exception.*;
-import com.bankingapp.root.mapper.CustomerAddressEntityDTOMapper;
 import com.bankingapp.root.mapper.UserDTOEntityMapper;
-import com.bankingapp.root.repository.AddressRepository;
-import com.bankingapp.root.repository.CustomerRepository;
-import com.bankingapp.root.repository.EmployeeRepository;
 import com.bankingapp.root.repository.UserRepository;
-import com.bankingapp.root.util.JwtUtil;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 @Service
 public class AuthService {
-
     private final UserRepository userRepository;
-    private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
-    private final EmployeeRepository employeeRepository;
-    private final CustomerRepository customerRepository;
-    private final AddressRepository addressRepository;
+    private final AuthenticationManager authManager;
 
     public AuthService(UserRepository userRepository,
-                       JwtUtil jwtUtil,
                        PasswordEncoder passwordEncoder,
-                       EmployeeRepository employeeRepository,
-                       CustomerRepository customerRepository,
-                       AddressRepository addressRepository) {
+                       AuthenticationManager authManager) {
         this.userRepository = userRepository;
-        this.jwtUtil = jwtUtil;
         this.passwordEncoder = passwordEncoder;
-        this.employeeRepository = employeeRepository;
-        this.customerRepository = customerRepository;
-        this.addressRepository = addressRepository;
+        this.authManager = authManager;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -74,73 +55,19 @@ public class AuthService {
         user.setPassword(encodedPassword);
         final UserEntity userEntity = UserDTOEntityMapper.map(user);
         final UserEntity savedUserEntity = userRepository.save(userEntity);
-        if (user.getUserRole().equals(Constants.UserRoles.CUSTOMER)) {
-            final CustomerEntity customerEntity = new CustomerEntity();
-            customerEntity.setCustomer(userEntity);
-            customerEntity.setDateOfBirth(user.getBirthDate());
-            customerEntity.setContactNumber(user.getPhone());
-            customerRepository.save(customerEntity);
-            final List<CustomerAddressEntity> addresses = user.getAddresses()
-                    .stream()
-                    .map(address -> {
-                        final CustomerAddressEntity customerAddressEntity = CustomerAddressEntityDTOMapper.map(address);
-                        customerAddressEntity.setCustomer(customerEntity);
-                        return customerAddressEntity;
-                    })
-                    .toList();
-            addressRepository.saveAll(addresses);
-        } else {
-            final EmployeeEntity employeeEntity = new EmployeeEntity();
-            employeeEntity.setEmployee(userEntity);
-            employeeEntity.setContactNumber(user.getPhone());
-            employeeRepository.save(employeeEntity);
-        }
         return UserDTOEntityMapper.map(savedUserEntity);
     }
 
-    public String loginUser(final AuthRequestDTO authRequest, final HttpServletResponse response) {
-        if (Objects.isNull(authRequest))
-            throw new IllegalArgumentException("Auth data must not be null.");
-        final UserEntity userEntity = userRepository.findByUsername(authRequest.getUsername())
-                .orElseThrow(() -> new UserNotFoundException("User with username " + authRequest.getUsername() + " not found."));
-        if (Objects.equals(userEntity.getUsername(), authRequest.getUsername())
-                && passwordEncoder.matches(authRequest.getPassword(), userEntity.getPassword())) {
-            final Constants.UserRoles userRole = userEntity.getUserRole();
-            if (Objects.isNull(userRole))
-                throw new UserNotFoundException("Role not found.");
-            final String accessToken = jwtUtil.generateToken(authRequest.getUsername(), userRole);
-            final String refreshToken = jwtUtil.generateRefreshToken(authRequest.getUsername());
-            Cookie cookie = new Cookie("refreshToken", refreshToken);
-            cookie.setHttpOnly(true);
-            cookie.setSecure(true);
-            cookie.setPath("/api/v1/auth/refresh");
-            cookie.setMaxAge(7 * 24 * 60 * 60);
-            response.addCookie(cookie);
-            return accessToken;
-        } else {
-            throw new InvalidCredentialsException("Invalid username or password.");
-        }
-    }
-
-    public Map<String, String> refreshToken(final HttpServletRequest request) {
-        final Cookie[] cookies = request.getCookies();
-        if(Objects.isNull(cookies))
-            throw new InvalidCredentialsException("Invalid username or password.");
-        for (Cookie cookie : cookies) {
-            if ("refreshToken".equals(cookie.getName())) {
-                String refreshToken = cookie.getValue();
-                if (jwtUtil.isTokenExpired(refreshToken))
-                    throw new InvalidTokenException("Token is expired.");
-                String username = jwtUtil.extractUsername(refreshToken);
-                String newAccessToken = jwtUtil.generateToken(username, jwtUtil.extractRole(refreshToken));
-
-                Map<String, String> response = new HashMap<>();
-                response.put("accessToken", newAccessToken);
-                return response;
-            }else {
-                throw new InvalidTokenException("Invalid refresh token.");
-            }
-        }
-        return null;
+    public void login(AuthRequestDTO authRequestDTO, HttpServletRequest request) {
+        if(authRequestDTO == null)
+            throw new IllegalArgumentException("AuthRequestDTO cannot be null");
+        UsernamePasswordAuthenticationToken authInputToken =
+                new UsernamePasswordAuthenticationToken(authRequestDTO.getUsername(), authRequestDTO.getPassword());
+        Authentication authentication = authManager.authenticate(authInputToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        request.getSession(true).setAttribute(
+                HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
+                SecurityContextHolder.getContext()
+        );
     }
 }

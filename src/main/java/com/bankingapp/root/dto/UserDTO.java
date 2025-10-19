@@ -2,6 +2,7 @@ package com.bankingapp.root.dto;
 
 import com.bankingapp.root.common.Constants;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -9,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -40,11 +42,9 @@ public class UserDTO {
     @JsonProperty("email")
     private String email;
 
-    @JsonProperty("date_of_birthday")
-    private Date birthDate;
-
     @JsonProperty("address")
-    List<CustomerAddressDTO> addresses;
+    @NotBlank(message = "Address can not be blank")
+    private String address;
 
     @NotBlank(message = "Phone can not be blank")
     @JsonProperty("phone")

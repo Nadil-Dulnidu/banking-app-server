@@ -22,9 +22,9 @@ public class FundsTransferEntity {
     @Column(name = "transfer_id", nullable = false)
     private Integer id;
 
-    @Column(name = "from_account", nullable = false)
-    @NotBlank(message = "From account must not be null")
-    private String fromAccount;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_id")
+    private AccountEntity account;
 
     @Column(name = "to_account", nullable = false)
     @NotBlank(message = "To account must not be null")

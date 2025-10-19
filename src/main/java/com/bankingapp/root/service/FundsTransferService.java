@@ -2,13 +2,15 @@ package com.bankingapp.root.service;
 
 import com.bankingapp.root.common.Constants;
 import com.bankingapp.root.dto.FundsTransferDTO;
+import com.bankingapp.root.entity.AccountEntity;
 import com.bankingapp.root.entity.FundsTransferEntity;
+import com.bankingapp.root.exception.AccountException;
 import com.bankingapp.root.exception.FundsTransferException;
 import com.bankingapp.root.exception.TransferNotFoundException;
 import com.bankingapp.root.mapper.FundsTransferDTOEntityMapper;
+import com.bankingapp.root.repository.AccountRepository;
 import com.bankingapp.root.repository.FundsTransferRepository;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,9 +20,11 @@ import java.util.List;
 @Service
 public class FundsTransferService {
     private final FundsTransferRepository fundsTransferRepository;
+    private final AccountRepository accountRepository;
 
-    public FundsTransferService(FundsTransferRepository fundsTransferRepository) {
+    public FundsTransferService(FundsTransferRepository fundsTransferRepository, AccountRepository accountRepository) {
         this.fundsTransferRepository = fundsTransferRepository;
+        this.accountRepository = accountRepository;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -28,15 +32,27 @@ public class FundsTransferService {
         if (fundsTransferRepository == null)
             throw new FundsTransferException("FundsTransferRepository cannot be null");
         final FundsTransferEntity fundsTransferEntity = FundsTransferDTOEntityMapper.map(fundsTransferDTO);
+        final AccountEntity senderAcc = accountRepository.findByAccountNumber(fundsTransferDTO.getFromAccount())
+                .orElseThrow(() -> new AccountException("Sender Account not found"));
         if (fundsTransferDTO.getScheduledAt() != null) {
             fundsTransferEntity.setStatus(Constants.TransferStatus.PENDING);
         } else {
-            //check if both user back account exists
-            //check sender back account has balance
+
+            if(senderAcc.getBalance().compareTo(fundsTransferDTO.getAmount()) == 0)
+                throw new FundsTransferException("Transfer amount is insufficient");
+            senderAcc.setBalance(senderAcc.getBalance() - fundsTransferDTO.getAmount());
+            accountRepository.save(senderAcc);
+            if(fundsTransferDTO.getTransferType().equals(Constants.TransferType.INTRA_BANK)){
+                final AccountEntity receiverAcc = accountRepository.findByAccountNumber(fundsTransferDTO.getToAccount())
+                        .orElseThrow(()->  new AccountException("Receiver Account not found"));
+                receiverAcc.setBalance(receiverAcc.getBalance() + fundsTransferDTO.getAmount());
+                accountRepository.save(receiverAcc);
+            }
             fundsTransferEntity.setStatus(Constants.TransferStatus.COMPLETED);
         }
         final LocalDateTime currentDateTime = LocalDateTime.now();
         fundsTransferEntity.setCreatedAt(currentDateTime);
+        fundsTransferEntity.setAccount(senderAcc);
         fundsTransferRepository.save(fundsTransferEntity);
         return FundsTransferDTOEntityMapper.map(fundsTransferEntity);
     }
@@ -62,7 +78,7 @@ public class FundsTransferService {
             final String fromAccount,
             final Constants.TransferStatus transferStatus
     ) {
-        final List<FundsTransferDTO> fundsTransferDTOS = fundsTransferRepository.findByFromAccount(fromAccount)
+        final List<FundsTransferDTO> fundsTransferDTOS = fundsTransferRepository.findAllByAccount_AccountNumber(fromAccount)
                 .stream()
                 .map(FundsTransferDTOEntityMapper::map)
                 .filter(transfer -> transferStatus == null || transferStatus.equals(transfer.getStatus()))
@@ -118,10 +134,19 @@ public class FundsTransferService {
                                 && transfer.getScheduledAt().isBefore(nowTime))
                 .toList();
         for (FundsTransferEntity transfer : pendingTransfers) {
-            // Check account balances
-            // Deduct from sender
-            // Add to receiver
+            final AccountEntity senderAcc = accountRepository.findByAccountNumber(transfer.getAccount().getAccountNumber())
+                    .orElseThrow(() -> new AccountException("Sender Account not found"));
+            if(senderAcc.getBalance().compareTo(transfer.getAmount()) == 0)
+                throw new FundsTransferException("Transfer amount is insufficient");
+            senderAcc.setBalance(senderAcc.getBalance() - transfer.getAmount());
             transfer.setStatus(Constants.TransferStatus.COMPLETED);
+            accountRepository.save(senderAcc);
+            if(transfer.getTransferType().equals(Constants.TransferType.INTRA_BANK)){
+                final AccountEntity receiverAcc = accountRepository.findByAccountNumber(transfer.getAccount().getAccountNumber())
+                        .orElseThrow(() -> new AccountException("Receiver Account not found"));
+                receiverAcc.setBalance(receiverAcc.getBalance() + transfer.getAmount());
+                accountRepository.save(receiverAcc);
+            }
             fundsTransferRepository.save(transfer);
         }
     }

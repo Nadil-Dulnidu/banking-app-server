@@ -17,6 +17,8 @@ public class UserDTOEntityMapper {
         userDTO.setPassword(userEntity.getPassword());
         userDTO.setUsername(userEntity.getUsername());
         userDTO.setUserRole(userEntity.getUserRole());
+        userDTO.setPhone(userEntity.getPhone());
+        userDTO.setAddress(userEntity.getAddress());
         return userDTO;
     }
 
@@ -31,6 +33,8 @@ public class UserDTOEntityMapper {
         userEntity.setPassword(userDTO.getPassword());
         userEntity.setUsername(userDTO.getUsername());
         userEntity.setUserRole(userDTO.getUserRole());
+        userEntity.setPhone(userDTO.getPhone());
+        userEntity.setAddress(userDTO.getAddress());
         return userEntity;
     }
 }

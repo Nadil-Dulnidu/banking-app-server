@@ -43,14 +43,19 @@ public class UserEntity {
     @Column(name = "email", unique = true, nullable = false)
     private String email;
 
+    @NotBlank(message = "address must not be blank")
+    @Column(name = "address", nullable = false)
+    private String address;
+
+    @NotBlank(message = "phone must not be blank")
+    @Column(name = "phone", nullable = false)
+    private String phone;
+
     @NotNull(message = "role must not be null")
     @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
     private Constants.UserRoles userRole;
 
-    @OneToMany(mappedBy = "customer", orphanRemoval = true, cascade = CascadeType.ALL)
-    private List<CustomerEntity> customers;
-
-    @OneToMany(mappedBy = "employee", orphanRemoval = true, cascade = CascadeType.ALL)
-    private List<EmployeeEntity> employees;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<AccountEntity> accounts;
 }
