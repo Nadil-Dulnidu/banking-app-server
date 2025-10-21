@@ -1,6 +1,5 @@
 package com.bankingapp.root.controller;
 
-import com.bankingapp.root.common.Constants;
 import com.bankingapp.root.dto.AccountDTO;
 import com.bankingapp.root.dto.FundsTransferDTO;
 import com.bankingapp.root.dto.UserDTO;
@@ -8,11 +7,12 @@ import com.bankingapp.root.service.AccountService;
 import com.bankingapp.root.service.FundsTransferService;
 import com.bankingapp.root.service.UserService;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.List;
@@ -32,6 +32,7 @@ public class FundsTransferController {
         this.userService = userService;
     }
 
+    @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping("/transactionForm")
     public String transferPage(Model model, Principal principal) {
         String username = principal.getName();
@@ -44,23 +45,27 @@ public class FundsTransferController {
         return "transaction";
     }
 
+    @PreAuthorize("hasRole('CUSTOMER')")
     @PostMapping("/create")
-    public String createFundsTransfer(@ModelAttribute("transferForm") @Valid FundsTransferDTO fundsTransferDTO, Model model) {
+    public String createFundsTransfer(@ModelAttribute("transferForm") @Valid FundsTransferDTO fundsTransferDTO,
+                                      RedirectAttributes redirectAttributes) {
         try{
             fundsTransferService.createTransfer(fundsTransferDTO);
             return "redirect:/customer/dashboard?success=true";
         }catch (RuntimeException ex){
-            model.addAttribute("errMessage", ex.getMessage());
-            return "transaction";
+            redirectAttributes.addFlashAttribute("errMessage", ex.getMessage());
+            return "redirect:/transfer/transactionForm";
         }
     }
 
+    @PreAuthorize("hasRole('CUSTOMER')")
     @PostMapping("/update")
     public String updateTransfer(@ModelAttribute FundsTransferDTO updatedTransfer) {
         fundsTransferService.updateTransfer(updatedTransfer);
         return "redirect:/customer/dashboard";
     }
 
+    @PreAuthorize("hasRole('CUSTOMER')")
     @PostMapping("/delete/{id}")
     public String deleteTransfer(
             @PathVariable final Integer id) {

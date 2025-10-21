@@ -1,5 +1,6 @@
 package com.bankingapp.root.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,6 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AuthRequestDTO {
 
+    @NotBlank(message = "Username must not be blank")
     private String username;
+
+    @NotBlank(message = "Password must not be blank")
     private String password;
 }

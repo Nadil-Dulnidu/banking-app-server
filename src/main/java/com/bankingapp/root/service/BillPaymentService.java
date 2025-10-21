@@ -1,5 +1,6 @@
 package com.bankingapp.root.service;
 
+import com.bankingapp.root.common.Constants;
 import com.bankingapp.root.dto.BillPaymentDTO;
 import com.bankingapp.root.entity.AccountEntity;
 import com.bankingapp.root.entity.BillPaymentEntity;
@@ -24,7 +25,7 @@ public class BillPaymentService {
         this.accountRepository = accountRepository;
     }
 
-    public BillPaymentDTO createPayment(BillPaymentDTO payment) {
+    public void createPayment(BillPaymentDTO payment) {
         if (payment == null) {
             throw new BillPaymentException("payment cannot be null");
         }
@@ -34,20 +35,24 @@ public class BillPaymentService {
         if(accountEntity.getBalance().compareTo(billPaymentEntity.getAmount()) < 0){
             throw new AccountException("Not enough balance to pay this bill.");
         }
-        accountEntity.setBalance(accountEntity.getBalance() - billPaymentEntity.getAmount());
         billPaymentEntity.setAccount(accountEntity);
+        billPaymentEntity.setPaymentStatus(Constants.PaymentStatus.PENDING);
         billPaymentEntity.setPaymentDate(LocalDateTime.now());
-        accountRepository.save(accountEntity);
         BillPaymentEntity savedBill = billPaymentRepository.save(billPaymentEntity);
-        return BillPaymentDTOEntityMapper.map(savedBill);
+        BillPaymentDTOEntityMapper.map(savedBill);
     }
 
-    public BillPaymentDTO getPaymentById(Integer id) {
+    public void ConfirmPayment(Integer id) {
         if (id == null)
             throw new BillPaymentException("id cannot be null");
         BillPaymentEntity billPaymentEntity = billPaymentRepository.findById(id)
                 .orElseThrow(() -> new BillPaymentException("bill payment not found"));
-        return BillPaymentDTOEntityMapper.map(billPaymentEntity);
+        AccountEntity accountEntity = accountRepository.findByAccountNumber(billPaymentEntity.getAccount().getAccountNumber())
+                .orElseThrow(() -> new AccountException("account not found"));
+        accountEntity.setBalance(accountEntity.getBalance() - billPaymentEntity.getAmount());
+        billPaymentEntity.setPaymentStatus(Constants.PaymentStatus.COMPLETED);
+        accountRepository.save(accountEntity);
+        billPaymentRepository.save(billPaymentEntity);
     }
 
     public List<BillPaymentDTO> getPaymentsByUsername(String username) {
@@ -60,23 +65,13 @@ public class BillPaymentService {
         return billPaymentDTOS;
     }
 
-    public List<BillPaymentDTO> getPaymentsByAccountId(Integer accountId) {
-        if (accountId == null)
-            throw new BillPaymentException("accountNumber cannot be null");
-        List<BillPaymentDTO> billPaymentDTOS = billPaymentRepository.findAllByAccount_Id(accountId)
-                .stream()
-                .map(BillPaymentDTOEntityMapper::map)
-                .toList();
-        return billPaymentDTOS;
-    }
-
-    public BillPaymentDTO deletePayment(Integer id) {
+    public void deletePayment(Integer id) {
         if (id == null)
             throw new BillPaymentException("id cannot be null");
         BillPaymentEntity billPaymentEntity = billPaymentRepository.findById(id)
                 .orElseThrow(() -> new BillPaymentException("bill payment not found"));
         billPaymentRepository.delete(billPaymentEntity);
-        return BillPaymentDTOEntityMapper.map(billPaymentEntity);
+        BillPaymentDTOEntityMapper.map(billPaymentEntity);
 
     }
 }

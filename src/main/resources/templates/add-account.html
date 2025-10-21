@@ -72,7 +72,6 @@
                                         <option value="SAVINGS">Savings Account</option>
                                         <option value="CHECKING">Checking Account</option>
                                         <option value="BUSINESS">Business Account</option>
-                                        <option value="LOAN">Loan Account</option>
                                     </select>
                                 </div>
 
@@ -83,6 +82,8 @@
                                         <input type="number" id="balance" th:field="*{balance}" step="0.01" value="0" placeholder="0.00" min="1000">
                                     </div>
                                 </div>
+
+                                <div th:text="${errMessage}" style="color: #dc3545"></div>
 
                                 <div class="form-actions">
                                     <a th:href="@{/customer/dashboard}" class="btn btn-secondary">

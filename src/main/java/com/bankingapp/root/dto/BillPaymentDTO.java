@@ -29,4 +29,6 @@ public class BillPaymentDTO {
     private String accountNumber;
 
     private LocalDateTime paymentDate;
+
+    private Constants.PaymentStatus paymentStatus;
 }

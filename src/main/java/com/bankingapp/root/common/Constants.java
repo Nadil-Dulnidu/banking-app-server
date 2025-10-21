@@ -32,12 +32,17 @@ public class Constants {
     public enum AccountType {
         SAVINGS,
         CHECKING,
-        BUSINESS,
-        LOAN
+        BUSINESS
     }
 
     public enum PaymentFrequency {
         ONE_TIME,
         MONTHLY
+    }
+
+    public enum PaymentStatus {
+        PENDING,
+        COMPLETED,
+        FAILED
     }
 }

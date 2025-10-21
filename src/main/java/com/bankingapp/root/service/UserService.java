@@ -1,6 +1,5 @@
 package com.bankingapp.root.service;
 
-import com.bankingapp.root.common.Constants;
 import com.bankingapp.root.dto.UserDTO;
 import com.bankingapp.root.entity.AccountEntity;
 import com.bankingapp.root.entity.UserEntity;
@@ -26,7 +25,7 @@ public class UserService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public UserDTO updateUser(final UserDTO user) {
+    public void updateUser(final UserDTO user) {
         if (Objects.isNull(user))
             throw new IllegalArgumentException("User data must not be null.");
         final UserEntity existingUser = userRepository.findById(user.getId())
@@ -37,16 +36,9 @@ public class UserService {
         existingUser.setAddress(user.getAddress());
         existingUser.setPhone(user.getPhone());
         final UserEntity savedEntity = userRepository.save(existingUser);
-        return UserDTOEntityMapper.map(savedEntity);
+        UserDTOEntityMapper.map(savedEntity);
     }
 
-    public UserDTO getUserById(Integer id) {
-        if (Objects.isNull(id))
-            throw new IllegalArgumentException("username must not be null.");
-        final UserEntity user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("User not found."));
-        return UserDTOEntityMapper.map(user);
-    }
 
     public UserDTO getUserByUsername(final String username) {
         if (Objects.isNull(username) || username.isEmpty())
@@ -57,7 +49,7 @@ public class UserService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public UserDTO deleteUserById(Integer id) {
+    public void deleteUserById(Integer id) {
         if (Objects.isNull(id))
             throw new IllegalArgumentException("User data must not be null.");
         final UserEntity user = userRepository.findById(id)
@@ -68,11 +60,11 @@ public class UserService {
             throw new IllegalStateException("Cannot delete user with existing accounts.");
         }
         userRepository.delete(user);
-        return UserDTOEntityMapper.map(user);
+        UserDTOEntityMapper.map(user);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public UserDTO deleteUserByUsername(String username) {
+    public void deleteUserByUsername(String username) {
         if (Objects.isNull(username) || username.isEmpty())
             throw new IllegalArgumentException("User data must not be null.");
         List<AccountEntity> accounts = accountRepository.findByUser_Username(username);
@@ -83,7 +75,7 @@ public class UserService {
                 .orElseThrow(() ->
                         new UserNotFoundException("User not found."));
         userRepository.delete(user);
-        return UserDTOEntityMapper.map(user);
+        UserDTOEntityMapper.map(user);
     }
 
     public List<UserDTO> getAllUsers() {

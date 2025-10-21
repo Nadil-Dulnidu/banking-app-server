@@ -119,6 +119,8 @@
                                         I confirm that the bill payment details are correct and I agree to the <a href="#" class="link">Terms and Conditions</a>
                                     </label>
                                 </div>
+
+                                <div th:text="${errMessage}" style="color: #dc3545"></div>
                                 
                                 <div class="form-actions">
                                     <a th:href="@{/customer/dashboard}" class="btn btn-secondary">

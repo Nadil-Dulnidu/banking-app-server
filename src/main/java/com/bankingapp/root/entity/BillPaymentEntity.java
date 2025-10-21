@@ -31,6 +31,10 @@ public class BillPaymentEntity {
     @Column(name = "payment_date", nullable = false)
     private LocalDateTime paymentDate;
 
+    @Column(name = "payment_status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Constants.PaymentStatus paymentStatus;
+
     @ManyToOne
     @JoinColumn(name = "account_id")
     private AccountEntity account;

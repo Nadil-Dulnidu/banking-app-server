@@ -94,6 +94,8 @@
                     </label>
                 </div>
 
+                <div th:text="${errMessage}" style="color: #dc3545"></div>
+
                 <input type="hidden" th:name="userRole" th:value="'CUSTOMER'">
                 
                 <button type="submit" class="btn btn-primary">

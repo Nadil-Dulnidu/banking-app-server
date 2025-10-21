@@ -1,6 +1,8 @@
 package com.bankingapp.root.service;
 
 import com.bankingapp.root.common.Constants;
+import com.bankingapp.root.component.Account;
+import com.bankingapp.root.component.AccountFactory;
 import com.bankingapp.root.dto.AccountDTO;
 import com.bankingapp.root.entity.AccountEntity;
 import com.bankingapp.root.entity.UserEntity;
@@ -16,10 +18,13 @@ import java.util.List;
 public class AccountService {
     private final AccountRepository accountRepository;
     private final UserRepository userRepository;
+    private final AccountFactory accountFactory;
 
     public AccountService(final AccountRepository accountRepository,
-    UserRepository userRepository) {
+    UserRepository userRepository,
+                          AccountFactory accountFactory) {
         this.userRepository = userRepository;
+        this.accountFactory = accountFactory;
         this.accountRepository = accountRepository;
     }
 
@@ -28,22 +33,20 @@ public class AccountService {
             throw new AccountException("User ID is required to create an account");
         UserEntity userEntity = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+        final Account accountType = accountFactory.createAccount(account.getAccountType());
+        final double initialBalance = accountType.getInitialBalance();
+        if (initialBalance > account.getBalance()) {
+            throw new AccountException("Initial balance for " + account.getAccountType() +
+                    " account must be at least " + initialBalance);
+        }
         AccountEntity accountEntity = AccountDTOEntityMapper.map(account);
         accountEntity.setUser(userEntity);
         String accountNumber = "AC" + System.currentTimeMillis();
         accountEntity.setAccountNumber(accountNumber);
         accountEntity.setStatus(Constants.AccountStatus.ACTIVE);
-        AccountEntity savedAccount = accountRepository.save(accountEntity);
-        AccountDTOEntityMapper.map(savedAccount);
+        accountRepository.save(accountEntity);
     }
 
-    public AccountDTO getAccount(Integer accountId) {
-        if (accountId == null)
-            throw new AccountException("Account ID is required");
-        AccountEntity accountEntity = accountRepository.findById(accountId)
-                .orElseThrow(() -> new RuntimeException("Account not found"));
-        return AccountDTOEntityMapper.map(accountEntity);
-    }
 
     public List<AccountDTO> getAllAccountsByUser(String username) {
         List<AccountDTO> accounts = accountRepository.findByUser_Username(username)
@@ -61,21 +64,19 @@ public class AccountService {
         return accounts;
     }
 
-    public AccountDTO updateStatus(Integer id, Constants.AccountStatus status) {
+    public void updateStatus(Integer id, Constants.AccountStatus status) {
         AccountEntity acc = accountRepository.findById(id)
                 .orElseThrow(() -> new AccountException("Account not found"));
         acc.setStatus(status);
         AccountEntity updatedAcc = accountRepository.save(acc);
-        return AccountDTOEntityMapper.map(updatedAcc);
     }
 
-    public AccountDTO deleteAccount(Integer id) {
+    public void deleteAccount(Integer id) {
         AccountEntity acc = accountRepository.findById(id)
                 .orElseThrow(() -> new AccountException("Account not found"));
         if (acc.getBalance() != 0)
             throw new RuntimeException("Account balance must be zero before closing");
         acc.setStatus(Constants.AccountStatus.CLOSED);
         accountRepository.save(acc);
-        return AccountDTOEntityMapper.map(acc);
     }
 }

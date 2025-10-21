@@ -33,7 +33,7 @@ public class AuthService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public UserDTO registerUser(final UserDTO user) {
+    public void registerUser(final UserDTO user) {
         if (Objects.isNull(user))
             throw new IllegalArgumentException("User data must not be null.");
         if (userRepository.findByUsername(user.getUsername()).isPresent())
@@ -55,7 +55,7 @@ public class AuthService {
         user.setPassword(encodedPassword);
         final UserEntity userEntity = UserDTOEntityMapper.map(user);
         final UserEntity savedUserEntity = userRepository.save(userEntity);
-        return UserDTOEntityMapper.map(savedUserEntity);
+        UserDTOEntityMapper.map(savedUserEntity);
     }
 
     public void login(AuthRequestDTO authRequestDTO, HttpServletRequest request) {
