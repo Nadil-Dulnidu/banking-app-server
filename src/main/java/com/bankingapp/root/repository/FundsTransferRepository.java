@@ -8,5 +8,8 @@ import java.util.List;
 
 @Repository
 public interface FundsTransferRepository extends JpaRepository<FundsTransferEntity,Integer> {
+
     List<FundsTransferEntity> findAllByAccount_AccountNumber(String accountAccountNumber);
+
+    List<FundsTransferEntity> findAllByAccount_User_Username(String username);
 }

@@ -4,7 +4,8 @@ import com.bankingapp.root.common.Constants;
 import jakarta.persistence.*;
 import jakarta.persistence.Entity;
 import lombok.*;
-import java.time.LocalDate;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "bill_payment")
@@ -27,8 +28,8 @@ public class BillPaymentEntity {
     @Enumerated(EnumType.STRING)
     private Constants.PaymentFrequency paymentFrequency;
 
-    @Column(name = "next_payment")
-    private LocalDate nextPaymentDate;
+    @Column(name = "payment_date", nullable = false)
+    private LocalDateTime paymentDate;
 
     @ManyToOne
     @JoinColumn(name = "account_id")

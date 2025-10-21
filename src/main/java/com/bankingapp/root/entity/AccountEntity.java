@@ -31,13 +31,13 @@ public class AccountEntity {
 
     @Column(name = "account_status", nullable = false)
     @Enumerated(EnumType.STRING)
-    private Constants.AccountStatus status = Constants.AccountStatus.ACTIVE;
+    private Constants.AccountStatus status;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    @OneToMany(mappedBy = "account",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "account",cascade = CascadeType.ALL, orphanRemoval = true)
     List<FundsTransferEntity> fundsTransfers;
 
     @OneToMany(mappedBy = "account",orphanRemoval = true,cascade = CascadeType.ALL)

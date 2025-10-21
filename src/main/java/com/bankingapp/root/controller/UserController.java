@@ -2,13 +2,13 @@ package com.bankingapp.root.controller;
 
 import com.bankingapp.root.dto.UserDTO;
 import com.bankingapp.root.service.UserService;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.security.Principal;
 
 @Controller
 @RequestMapping("/user")
@@ -20,45 +20,26 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PutMapping
-    @ResponseBody
-    public UserDTO updateUser(@Valid @RequestBody UserDTO user) {
-        return userService.updateUser(user);
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @PostMapping("/update")
+    public String updateProfile(@ModelAttribute("user") UserDTO updatedUser) {
+        userService.updateUser(updatedUser);
+        return "redirect:/customer/dashboard?success";
     }
 
-    @GetMapping("/{id}")
-    @ResponseBody
-    public UserDTO getUser(
-            @Valid
-            @Min(value = 1, message = "User ID must be a positive integer")
-            @PathVariable Integer id) {
-        return userService.getUserById(id);
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @GetMapping("/delete")
+    public String deleteProfile(Principal principal, HttpSession session) {
+        String username = principal.getName();
+        userService.deleteUserByUsername(username);
+        session.invalidate();
+        return "redirect:/auth/login?accountDeleted";
     }
 
-    @GetMapping
-    @ResponseBody
-    public List<UserDTO> getAllUsers() {
-        return userService.getAllUsers();
-    }
-
-    @GetMapping("/username/{username}")
-    @ResponseBody
-    public UserDTO getUserByUsername(@Valid @PathVariable final String username) {
-        return userService.getUserByUsername(username);
-    }
-
-    @DeleteMapping("/{id}")
-    @ResponseBody
-    public UserDTO deleteUser(
-            @Valid
-            @Min(value = 1, message = "User ID must be a positive integer")
-            @PathVariable Integer id) {
-        return userService.deleteUserById(id);
-    }
-
-    @DeleteMapping("/username/{username}")
-    @ResponseBody
-    public UserDTO deleteUser(@PathVariable String username) {
-        return userService.deleteUserByUsername(username);
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/delete/userid/{id}")
+    public String deleteUserById(@PathVariable Integer id) {
+        userService.deleteUserById(id);
+        return "redirect:/admin/dashboard?userDeleted";
     }
 }

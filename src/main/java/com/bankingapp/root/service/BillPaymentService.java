@@ -10,6 +10,7 @@ import com.bankingapp.root.repository.AccountRepository;
 import com.bankingapp.root.repository.BillPaymentRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -27,17 +28,15 @@ public class BillPaymentService {
         if (payment == null) {
             throw new BillPaymentException("payment cannot be null");
         }
-//        if(payment.getPaymentFrequency().equals(Constants.PaymentFrequency.MONTHLY)){
-//            //.......
-//        }
         BillPaymentEntity billPaymentEntity = BillPaymentDTOEntityMapper.map(payment);
-        AccountEntity accountEntity = accountRepository.findById(payment.getAccountId())
+        AccountEntity accountEntity = accountRepository.findByAccountNumber(payment.getAccountNumber())
                 .orElseThrow(() -> new AccountException("account not found"));
         if(accountEntity.getBalance().compareTo(billPaymentEntity.getAmount()) < 0){
             throw new AccountException("Not enough balance to pay this bill.");
         }
         accountEntity.setBalance(accountEntity.getBalance() - billPaymentEntity.getAmount());
         billPaymentEntity.setAccount(accountEntity);
+        billPaymentEntity.setPaymentDate(LocalDateTime.now());
         accountRepository.save(accountEntity);
         BillPaymentEntity savedBill = billPaymentRepository.save(billPaymentEntity);
         return BillPaymentDTOEntityMapper.map(savedBill);
@@ -51,10 +50,10 @@ public class BillPaymentService {
         return BillPaymentDTOEntityMapper.map(billPaymentEntity);
     }
 
-    public List<BillPaymentDTO> getPaymentsByAccountNumber(String accountNumber) {
-        if (accountNumber == null)
+    public List<BillPaymentDTO> getPaymentsByUsername(String username) {
+        if (username == null)
             throw new BillPaymentException("accountNumber cannot be null");
-        List<BillPaymentDTO> billPaymentDTOS = billPaymentRepository.findAllByAccount_AccountNumber(accountNumber)
+        List<BillPaymentDTO> billPaymentDTOS = billPaymentRepository.findAllByAccount_User_Username(username)
                 .stream()
                 .map(BillPaymentDTOEntityMapper::map)
                 .toList();

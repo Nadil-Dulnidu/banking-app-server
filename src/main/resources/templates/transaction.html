@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SecureBank - Transfer Money</title>
-    <link rel="stylesheet" href="../static/css/styles.css">
+    <link rel="stylesheet" href="/css/styles.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
@@ -14,7 +14,7 @@
             <div class="sidebar-header">
                 <div class="logo">
                     <i class="fas fa-university"></i>
-                    <h2>SecureBank</h2>
+                    <h2>TrustWave</h2>
                 </div>
             </div>
             
@@ -23,53 +23,18 @@
                     <i class="fas fa-user-circle"></i>
                 </div>
                 <div class="profile-info">
-                    <h4 id="userName">John Doe</h4>
-                    <p id="userRole">Customer</p>
+                    <h4 id="userName" th:text="|${user.getFirstName()} ${user.getLastName()} |"></h4>
+                    <p id="userRole" th:text="${user.getUserRole()}"></p>
                 </div>
             </div>
             
-            <ul class="nav-menu">
-                <li class="nav-item">
-                    <a href="dashboard.html" class="nav-link">
-                        <i class="fas fa-tachometer-alt"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="add-account.html" class="nav-link">
-                        <i class="fas fa-wallet"></i>
-                        <span>Add Account</span>
-                    </a>
-                </li>
-                <li class="nav-item active">
-                    <i class="fas fa-exchange-alt"></i>
-                    <span>Transfer Money</span>
-                </li>
-                <li class="nav-item">
-                    <a href="pay-bill.html" class="nav-link">
-                        <i class="fas fa-file-invoice-dollar"></i>
-                        <span>Pay Bills</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="dashboard.html#profile" class="nav-link">
-                        <i class="fas fa-user-cog"></i>
-                        <span>Profile</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="dashboard.html#settings" class="nav-link">
-                        <i class="fas fa-cog"></i>
-                        <span>Settings</span>
-                    </a>
-                </li>
-            </ul>
-            
             <div class="sidebar-footer">
-                <button class="btn btn-secondary" onclick="logout()">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Logout</span>
-                </button>
+                <a th:href="@{/auth/logout}">
+                    <button class="btn btn-secondary">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </button>
+                </a>
             </div>
         </nav>
         
@@ -82,7 +47,7 @@
                     <p>Send money to another account safely and securely</p>
                 </div>
                 <div class="header-right">
-                    <a href="dashboard.html" class="btn btn-secondary">
+                    <a th:href="@{/customer/dashboard}" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i>
                         Back to Dashboard
                     </a>
@@ -99,14 +64,16 @@
                                 <p>Please provide the transfer information</p>
                             </div>
                             
-                            <form id="transferForm" class="transfer-form">
+                            <form id="transferForm" class="transfer-form" th:object="${transferForm}" method="post" th:action="@{/transfer/create}">
                                 <div class="form-row">
                                     <div class="form-group">
-                                        <label for="fromAccount">From Account</label>
-                                        <select id="fromAccount" name="fromAccount" required>
-                                            <option value="">Select Your Account</option>
-                                            <option value="1234567890">Savings Account - ****7890</option>
-                                            <option value="0987654321">Checking Account - ****4321</option>
+                                        <<label for="fromAccount">From Account</label>
+                                        <select id="fromAccount" name="fromAccount" required th:field="*{fromAccount}">
+                                            <option value="" disabled selected>Select an account</option>
+                                            <option th:each="account : ${accounts}"
+                                                    th:value="${account.getAccountNumber()}"
+                                                    th:text="${account.getAccountNumber()}">
+                                            </option>
                                         </select>
                                         <div class="form-help">
                                             <i class="fas fa-info-circle"></i>
@@ -116,7 +83,7 @@
                                     
                                     <div class="form-group">
                                         <label for="transferType">Transfer Type</label>
-                                        <select id="transferType" name="transferType" required>
+                                        <select id="transferType" name="transferType" th:field="*{transferType}" required>
                                             <option value="">Select Transfer Type</option>
                                             <option value="INTRA_BANK">Same Bank Transfer</option>
                                             <option value="INTER_BANK">Different Bank Transfer</option>
@@ -130,7 +97,7 @@
                                 
                                 <div class="form-group">
                                     <label for="toAccount">To Account Number</label>
-                                    <input type="text" id="toAccount" name="toAccount" placeholder="Enter recipient's account number" required>
+                                    <input type="text" id="toAccount" name="toAccount" th:field="*{toAccount}" placeholder="Enter recipient's account number" required>
                                     <div class="form-help">
                                         <i class="fas fa-info-circle"></i>
                                         <span>Enter the recipient's account number</span>
@@ -139,7 +106,7 @@
                                 
                                 <div class="form-group">
                                     <label for="beneficiaryName">Beneficiary Name</label>
-                                    <input type="text" id="beneficiaryName" name="beneficiaryName" placeholder="Enter recipient's full name" required>
+                                    <input type="text" id="beneficiaryName" name="beneficiaryName" th:field="*{beneficiaryName}" placeholder="Enter recipient's full name" required>
                                     <div class="form-help">
                                         <i class="fas fa-info-circle"></i>
                                         <span>Enter the full name of the recipient</span>
@@ -150,7 +117,7 @@
                                     <label for="amount">Transfer Amount</label>
                                     <div class="input-wrapper">
                                         <i class="fas fa-dollar-sign"></i>
-                                        <input type="number" id="amount" name="amount" step="0.01" placeholder="0.00" required>
+                                        <input type="number" id="amount" name="amount" step="0.01" placeholder="0.00" th:field="*{amount}" required>
                                     </div>
                                     <div class="form-help">
                                         <i class="fas fa-info-circle"></i>
@@ -160,12 +127,23 @@
                                 
                                 <div class="form-group">
                                     <label for="description">Description (Optional)</label>
-                                    <textarea id="description" name="description" rows="3" placeholder="Add a note for this transfer"></textarea>
+                                    <textarea id="description" name="description" rows="3" th:field="*{description}" placeholder="Add a note for this transfer"></textarea>
                                     <div class="form-help">
                                         <i class="fas fa-info-circle"></i>
                                         <span>Add a description to help identify this transfer</span>
                                     </div>
                                 </div>
+
+                                <div class="form-group">
+                                    <label for="scheduleDate">Schedule Date (Optional)</label>
+                                    <input type="datetime-local" id="scheduleDate" name="scheduleDate" th:field="*{scheduledAt}">
+                                    <div class="form-help">
+                                        <i class="fas fa-info-circle"></i>
+                                        <span>Select a date and time to schedule the transfer</span>
+                                    </div>
+                                </div>
+
+                                <div th:text="${errMessage}" style="color: #dc3545"></div>
                                 
                                 <div class="form-group">
                                     <label class="checkbox-wrapper">
@@ -176,7 +154,7 @@
                                 </div>
                                 
                                 <div class="form-actions">
-                                    <a href="dashboard.html" class="btn btn-secondary">
+                                    <a  class="btn btn-secondary" th:href="@{/customer/dashboard}">
                                         <i class="fas fa-times"></i>
                                         Cancel
                                     </a>
@@ -227,49 +205,9 @@
             </div>
         </main>
     </div>
-    
-    <script src="../static/js/dashboard.js"></script>
-    <script src="../static/js/animations.js"></script>
+
+    <script src="/js/animations.js"></script>
     <script>
-        // Handle form submission
-        document.getElementById('transferForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(this);
-            const transferData = {
-                fromAccount: formData.get('fromAccount'),
-                toAccount: formData.get('toAccount'),
-                beneficiaryName: formData.get('beneficiaryName'),
-                amount: parseFloat(formData.get('amount')),
-                description: formData.get('description'),
-                transferType: formData.get('transferType')
-            };
-            
-            // Validate amount
-            if (transferData.amount <= 0) {
-                alert('Please enter a valid amount greater than $0');
-                return;
-            }
-            
-            // Show loading state
-            const submitBtn = this.querySelector('button[type="submit"]');
-            const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing Transfer...';
-            submitBtn.disabled = true;
-            
-            // Simulate API call
-            setTimeout(() => {
-                // Reset button
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-                
-                // Show success message
-                alert(`Transfer of $${transferData.amount} to ${transferData.beneficiaryName} has been initiated successfully!`);
-                
-                // Redirect to dashboard
-                window.location.href = 'dashboard.html';
-            }, 2000);
-        });
         
         // Handle transfer type change
         document.getElementById('transferType').addEventListener('change', function() {

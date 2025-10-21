@@ -1,48 +1,54 @@
 package com.bankingapp.root.controller;
 
+import com.bankingapp.root.dto.AccountDTO;
 import com.bankingapp.root.dto.BillPaymentDTO;
+import com.bankingapp.root.dto.UserDTO;
+import com.bankingapp.root.service.AccountService;
 import com.bankingapp.root.service.BillPaymentService;
+import com.bankingapp.root.service.UserService;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
 @RequestMapping("/bill-payment")
 public class BillPaymentController {
     private final BillPaymentService billPaymentService;
+    private final AccountService accountService;
+    private  final UserService userService;
 
-    public BillPaymentController(BillPaymentService billPaymentService) {
+    public BillPaymentController(BillPaymentService billPaymentService,
+                                 AccountService accountService,
+                                 UserService userService) {
+        this.userService = userService;
         this.billPaymentService = billPaymentService;
+        this.accountService = accountService;
     }
 
-    @PostMapping
-    @ResponseBody
-    public BillPaymentDTO createPayment(@RequestBody BillPaymentDTO payment) {
-        return billPaymentService.createPayment(payment);
+    @GetMapping("/billForm")
+    public String showBillPaymentForm(Model model, Principal principal) {
+        String username = principal.getName();
+        if (username == null) return "redirect:/auth/loginForm";
+        final UserDTO user = userService.getUserByUsername(username);
+        model.addAttribute("user", user);
+        List<AccountDTO> accounts = accountService.getAllAccountsByUser(principal.getName());
+        model.addAttribute("accounts", accounts);
+        model.addAttribute("billPayment", new BillPaymentDTO());
+        return "pay-bill";
     }
 
-    @GetMapping("/{id}")
-    @ResponseBody
-    public BillPaymentDTO getPayment(@PathVariable Integer id) {
-        return billPaymentService.getPaymentById(id);
+    @PostMapping("/create")
+    public String createBillPayment(@ModelAttribute("billPayment") BillPaymentDTO billPaymentDTO) {
+        billPaymentService.createPayment(billPaymentDTO);
+        return "redirect:/customer/dashboard?successBillPayment";
     }
 
-    @GetMapping("/account/{accountId}")
-    @ResponseBody
-    public List<BillPaymentDTO> getPaymentsByAccountId(@PathVariable Integer accountId) {
-        return billPaymentService.getPaymentsByAccountId(accountId);
-    }
-
-    @GetMapping("/account/number/{accountNumber}")
-    @ResponseBody
-    public List<BillPaymentDTO> getPaymentsByAccountNumber(@PathVariable String accountNumber) {
-        return billPaymentService.getPaymentsByAccountNumber(accountNumber);
-    }
-
-    @DeleteMapping("/{id}")
-    @ResponseBody
-    public BillPaymentDTO deletePayment(@PathVariable Integer id) {
-        return billPaymentService.deletePayment(id);
+    @PostMapping("/delete/{id}")
+    public String deleteBillPayment(@PathVariable Integer id) {
+        billPaymentService.deletePayment(id);
+        return "redirect:/customer/dashboard?deletedBillPayment";
     }
 }

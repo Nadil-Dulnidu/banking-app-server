@@ -1,13 +1,20 @@
 package com.bankingapp.root.controller;
 
 import com.bankingapp.root.common.Constants;
+import com.bankingapp.root.dto.AccountDTO;
 import com.bankingapp.root.dto.FundsTransferDTO;
+import com.bankingapp.root.dto.UserDTO;
+import com.bankingapp.root.service.AccountService;
 import com.bankingapp.root.service.FundsTransferService;
+import com.bankingapp.root.service.UserService;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -15,60 +22,49 @@ import java.util.List;
 @Validated
 public class FundsTransferController {
     private final FundsTransferService fundsTransferService;
-    public FundsTransferController(FundsTransferService fundsTransferService) {
+    private final AccountService accountService;
+    private final UserService userService;
+    public FundsTransferController(FundsTransferService fundsTransferService,
+                                   AccountService accountService,
+                                   UserService userService) {
         this.fundsTransferService = fundsTransferService;
+        this.accountService = accountService;
+        this.userService = userService;
     }
 
-    @PostMapping()
-    @ResponseBody
-    public FundsTransferDTO createTransfer (
-            @RequestBody final FundsTransferDTO fundsTransferDTO) {
-        final FundsTransferDTO savedTransfer = fundsTransferService.createTransfer(fundsTransferDTO);
-        return savedTransfer;
+    @GetMapping("/transactionForm")
+    public String transferPage(Model model, Principal principal) {
+        String username = principal.getName();
+        if (username == null) return "redirect:/auth/loginForm";
+        final UserDTO user = userService.getUserByUsername(username);
+        model.addAttribute("user", user);
+        model.addAttribute("transferForm", new FundsTransferDTO());
+        List<AccountDTO> accounts = accountService.getAllAccountsByUser(principal.getName());
+        model.addAttribute("accounts", accounts);
+        return "transaction";
     }
 
-    @GetMapping()
-    @ResponseBody
-    public List<FundsTransferDTO> getAllFundsTransfers(
-            @RequestParam(required = false, value = "fromAccount") final String fromAccount,
-            @RequestParam(required = false, value = "toAccount") final String toAccount,
-            @RequestParam(required = false, value = "status") final Constants.TransferStatus status) {
-        final List<FundsTransferDTO> transferDTOList = fundsTransferService.getAllTransfers(fromAccount, toAccount, status);
-        return transferDTOList;
+    @PostMapping("/create")
+    public String createFundsTransfer(@ModelAttribute("transferForm") @Valid FundsTransferDTO fundsTransferDTO, Model model) {
+        try{
+            fundsTransferService.createTransfer(fundsTransferDTO);
+            return "redirect:/customer/dashboard?success=true";
+        }catch (RuntimeException ex){
+            model.addAttribute("errMessage", ex.getMessage());
+            return "transaction";
+        }
     }
 
-    @PutMapping()
-    @ResponseBody
-    public FundsTransferDTO updateTransfer (
-            @RequestBody final FundsTransferDTO fundsTransferDTO) {
-        final FundsTransferDTO savedTransfer = fundsTransferService.updateTransfer(fundsTransferDTO);
-        return savedTransfer;
+    @PostMapping("/update")
+    public String updateTransfer(@ModelAttribute FundsTransferDTO updatedTransfer) {
+        fundsTransferService.updateTransfer(updatedTransfer);
+        return "redirect:/customer/dashboard";
     }
 
-    @GetMapping("/{id}")
-    @ResponseBody
-    public FundsTransferDTO getFundsTransferById(
-            @Min (value = 1, message = "Transfer id must be a positive integer")
+    @PostMapping("/delete/{id}")
+    public String deleteTransfer(
             @PathVariable final Integer id) {
-        final FundsTransferDTO fundsTransferDTO = fundsTransferService.getTransferById(id);
-        return fundsTransferDTO;
-    }
-
-    @DeleteMapping("/{id}")
-    @ResponseBody
-    public FundsTransferDTO deleteFundsTransferById(
-            @Min(value = 1, message = "Transfer id must be a positive integer")
-            @PathVariable final Integer id) {
-        final FundsTransferDTO transferDTO = fundsTransferService.deleteTransfer(id);
-        return transferDTO;
-    }
-
-    @GetMapping("/account/{account}")
-    @ResponseBody
-    public List<FundsTransferDTO> getFundsTransfersByAccount(
-            @PathVariable final String account,
-            @RequestParam(required = false, value = "status") final Constants.TransferStatus status) {
-        final List<FundsTransferDTO> fundsTransferDTOS = fundsTransferService.getAllTransfersByFromAccount(account, status);
-        return fundsTransferDTOS;
+        fundsTransferService.deleteTransfer(id);
+        return "redirect:/customer/dashboard";
     }
 }

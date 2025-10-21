@@ -48,6 +48,4 @@ public class FundsTransferDTO {
 
     @JsonProperty("scheduled_at")
     private LocalDateTime scheduledAt;
-
-
 }

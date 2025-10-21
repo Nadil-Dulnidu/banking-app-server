@@ -17,35 +17,7 @@ class DashboardManager {
     }
 
     loadMockData() {
-        // Mock user data
-
-        // Mock accounts data
-        this.accounts = [
-            {
-                id: 1,
-                accountNumber: 'ACC001234567',
-                accountType: 'SAVINGS',
-                balance: 12500.00,
-                status: 'ACTIVE',
-                userId: 1
-            },
-            {
-                id: 2,
-                accountNumber: 'ACC001234568',
-                accountType: 'CHECKING',
-                balance: 2450.75,
-                status: 'ACTIVE',
-                userId: 1
-            },
-            {
-                id: 3,
-                accountNumber: 'ACC001234569',
-                accountType: 'BUSINESS',
-                balance: 50000.00,
-                status: 'ACTIVE',
-                userId: 1
-            }
-        ];
+        // Mock user dat
 
         // Mock transfers data
         this.transfers = [
@@ -166,10 +138,10 @@ class DashboardManager {
 
     loadDashboardData() {
         this.loadRecentTransactions();
-        this.loadAccounts();
         this.loadTransfers();
         this.loadBills();
         this.populateAccountSelects();
+        this.loadProfile();
     }
 
     loadRecentTransactions() {
@@ -179,94 +151,26 @@ class DashboardManager {
         const recentTransactions = this.transfers.slice(0, 5);
         
         container.innerHTML = recentTransactions.map(transfer => `
-            <div class="transaction-item">
-                <div class="transaction-info">
-                    <div class="transaction-icon ${transfer.status === 'COMPLETED' ? 'income' : 'expense'}">
-                        <i class="fas fa-exchange-alt"></i>
-                    </div>
-                    <div class="transaction-details">
-                        <h4>${transfer.description}</h4>
-                        <p>${transfer.createdAt.toLocaleDateString()}</p>
-                    </div>
-                </div>
-                <div class="transaction-amount ${transfer.status === 'COMPLETED' ? 'positive' : 'negative'}">
-                    $${transfer.amount.toFixed(2)}
-                </div>
-            </div>
+            
         `).join('');
     }
 
-    loadAccounts() {
-        const container = document.getElementById('accountsGrid');
-        if (!container) return;
-
-        container.innerHTML = this.accounts.map(account => `
-            <div class="account-card">
-                <div class="account-header">
-                    <span class="account-type">${account.accountType}</span>
-                    <span class="account-number">${account.accountNumber}</span>
-                </div>
-                <div class="account-balance">$${account.balance.toLocaleString()}</div>
-                <div class="account-status">
-                    <span class="status-dot ${account.status.toLowerCase()}"></span>
-                    ${account.status}
-                </div>
-            </div>
-        `).join('');
-    }
 
     loadTransfers() {
         const container = document.getElementById('transfersGrid');
         if (!container) return;
 
-        container.innerHTML = this.transfers.map(transfer => `
-            <div class="transfer-card">
-                <div class="transfer-header">
-                    <span class="transfer-status ${transfer.status.toLowerCase()}">${transfer.status}</span>
-                    <span class="transfer-amount">$${transfer.amount.toFixed(2)}</span>
-                </div>
-                <div class="transfer-details">
-                    <div class="transfer-row">
-                        <span class="transfer-label">From:</span>
-                        <span class="transfer-value">${transfer.fromAccount}</span>
-                    </div>
-                    <div class="transfer-row">
-                        <span class="transfer-label">To:</span>
-                        <span class="transfer-value">${transfer.toAccount}</span>
-                    </div>
-                    <div class="transfer-row">
-                        <span class="transfer-label">Beneficiary:</span>
-                        <span class="transfer-value">${transfer.beneficiaryName}</span>
-                    </div>
-                    <div class="transfer-row">
-                        <span class="transfer-label">Description:</span>
-                        <span class="transfer-value">${transfer.description}</span>
-                    </div>
-                    <div class="transfer-row">
-                        <span class="transfer-label">Date:</span>
-                        <span class="transfer-value">${transfer.createdAt.toLocaleDateString()}</span>
-                    </div>
-                </div>
-            </div>
-        `).join('');
     }
+
 
     loadBills() {
         const container = document.getElementById('billsGrid');
         if (!container) return;
+    }
 
-        container.innerHTML = this.bills.map(bill => `
-            <div class="bill-card">
-                <div class="bill-header">
-                    <span class="bill-frequency">${bill.paymentFrequency}</span>
-                </div>
-                <div class="bill-name">${bill.billerName}</div>
-                <div class="bill-amount">$${bill.amount.toFixed(2)}</div>
-                <div class="bill-next-payment">
-                    Next payment: ${bill.nextPaymentDate.toLocaleDateString()}
-                </div>
-            </div>
-        `).join('');
+    loadProfile() {
+        const profileForm = document.getElementById('profileForm');
+        if (!profileForm) return;
     }
 
     populateAccountSelects() {
@@ -290,9 +194,6 @@ class DashboardManager {
             targetSection.classList.add('active');
             this.updatePageTitle(sectionName);
         }
-
-        // Load section-specific data
-        this.loadSectionData(sectionName);
     }
 
     updatePageTitle(sectionName) {
@@ -318,77 +219,6 @@ class DashboardManager {
         const navItems = document.querySelectorAll('.nav-item');
         navItems.forEach(item => item.classList.remove('active'));
         activeItem.classList.add('active');
-    }
-
-    loadSectionData(sectionName) {
-        switch (sectionName) {
-            case 'overview':
-                this.loadRecentTransactions();
-                break;
-            case 'accounts':
-                this.loadAccounts();
-                break;
-            case 'transfers':
-                this.loadTransfers();
-                break;
-            case 'bills':
-                this.loadBills();
-                break;
-            case 'profile':
-                this.loadProfileForm();
-                break;
-        }
-    }
-
-    loadProfileForm() {
-        const container = document.getElementById('profileForm');
-        if (!container) return;
-
-        container.innerHTML = `
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="profileFirstName">First Name</label>
-                    <div class="input-wrapper">
-                        <i class="fas fa-user"></i>
-                        <input type="text" id="profileFirstName" name="firstName" value="${this.currentUser.firstName}" required>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="profileLastName">Last Name</label>
-                    <div class="input-wrapper">
-                        <i class="fas fa-user"></i>
-                        <input type="text" id="profileLastName" name="lastName" value="${this.currentUser.lastName}" required>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="profileEmail">Email Address</label>
-                <div class="input-wrapper">
-                    <i class="fas fa-envelope"></i>
-                    <input type="email" id="profileEmail" name="email" value="${this.currentUser.email}" required>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="profilePhone">Phone Number</label>
-                <div class="input-wrapper">
-                    <i class="fas fa-phone"></i>
-                    <input type="tel" id="profilePhone" name="phone" value="${this.currentUser.phone}" required>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="profileAddress">Address</label>
-                <div class="input-wrapper">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <textarea id="profileAddress" name="address" rows="3" required>${this.currentUser.address}</textarea>
-                </div>
-            </div>
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save"></i>
-                    <span>Update Profile</span>
-                </button>
-            </div>
-        `;
     }
 
     // Modal functions
@@ -608,33 +438,6 @@ class DashboardManager {
             
         } catch (error) {
             this.showError('Bill payment setup failed. Please try again.');
-        }
-    }
-
-    async handleProfileSubmit(e) {
-        e.preventDefault();
-        
-        const formData = new FormData(e.target);
-        const profileData = {
-            firstName: formData.get('firstName'),
-            lastName: formData.get('lastName'),
-            email: formData.get('email'),
-            phone: formData.get('phone'),
-            address: formData.get('address')
-        };
-
-        try {
-            // Simulate API call
-            await this.simulateApiCall();
-            
-            // Update current user data
-            Object.assign(this.currentUser, profileData);
-            this.loadUserProfile();
-            
-            this.showSuccess('Profile updated successfully!');
-            
-        } catch (error) {
-            this.showError('Profile update failed. Please try again.');
         }
     }
 

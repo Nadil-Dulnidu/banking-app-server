@@ -12,10 +12,10 @@ public class BillPaymentDTOEntityMapper {
         BillPaymentDTO billPaymentDTO = new BillPaymentDTO();
         billPaymentDTO.setId(billPaymentEntity.getId());
         billPaymentDTO.setAmount(billPaymentEntity.getAmount());
-        billPaymentDTO.setNextPaymentDate(billPaymentEntity.getNextPaymentDate());
-        billPaymentDTO.setAccountId(billPaymentEntity.getAccount().getId());
+        billPaymentDTO.setAccountNumber(billPaymentEntity.getAccount().getAccountNumber());
         billPaymentDTO.setPaymentFrequency(billPaymentEntity.getPaymentFrequency());
         billPaymentDTO.setBillerName(billPaymentEntity.getBillerName());
+        billPaymentDTO.setPaymentDate(billPaymentEntity.getPaymentDate());
         return billPaymentDTO;
     }
 
@@ -26,9 +26,9 @@ public class BillPaymentDTOEntityMapper {
         BillPaymentEntity billPaymentEntity = new BillPaymentEntity();
         billPaymentEntity.setId(billPaymentDTO.getId());
         billPaymentEntity.setAmount(billPaymentDTO.getAmount());
-        billPaymentEntity.setNextPaymentDate(billPaymentDTO.getNextPaymentDate());
         billPaymentEntity.setBillerName(billPaymentDTO.getBillerName());
         billPaymentEntity.setPaymentFrequency(billPaymentDTO.getPaymentFrequency());
+        billPaymentEntity.setPaymentDate(billPaymentDTO.getPaymentDate());
         return billPaymentEntity;
     }
 }

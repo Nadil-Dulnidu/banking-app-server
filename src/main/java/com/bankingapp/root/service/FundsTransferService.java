@@ -57,19 +57,10 @@ public class FundsTransferService {
         return FundsTransferDTOEntityMapper.map(fundsTransferEntity);
     }
 
-    public List<FundsTransferDTO> getAllTransfers(
-            final String fromAccount,
-            final String toAccount,
-            final Constants.TransferStatus transferStatus
-    ) {
+    public List<FundsTransferDTO> getAllTransfers() {
         final List<FundsTransferDTO> fundsTransferDTOS = fundsTransferRepository.findAll()
                 .stream()
                 .map(FundsTransferDTOEntityMapper::map)
-                .filter(transfer -> fromAccount == null || fromAccount.isEmpty() ||
-                        fromAccount.contains(transfer.getFromAccount()))
-                .filter(transfer -> toAccount == null || toAccount.isEmpty() ||
-                        toAccount.contains(transfer.getToAccount()))
-                .filter(transfer -> transferStatus == null || transferStatus.equals(transfer.getStatus()))
                 .toList();
         return fundsTransferDTOS;
     }
@@ -95,7 +86,7 @@ public class FundsTransferService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public FundsTransferDTO updateTransfer(final FundsTransferDTO fundsTransferDTO) {
+    public void updateTransfer(final FundsTransferDTO fundsTransferDTO) {
         if (fundsTransferDTO == null)
             throw new FundsTransferException("fundsTransferDTO cannot be null");
         if (fundsTransferDTO.getScheduledAt() == null)
@@ -107,7 +98,7 @@ public class FundsTransferService {
         fundsTransferEntity.setAmount(fundsTransferDTO.getAmount());
         fundsTransferEntity.setScheduledAt(fundsTransferDTO.getScheduledAt());
         fundsTransferRepository.save(fundsTransferEntity);
-        return FundsTransferDTOEntityMapper.map(fundsTransferEntity);
+        FundsTransferDTOEntityMapper.map(fundsTransferEntity);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -149,5 +140,14 @@ public class FundsTransferService {
             }
             fundsTransferRepository.save(transfer);
         }
+    }
+
+    public List<FundsTransferDTO> getFundsTransfersByUsername(final String username) {
+        final List<FundsTransferDTO> fundsTransferDTOS =
+                fundsTransferRepository.findAllByAccount_User_Username(username)
+                .stream()
+                .map(FundsTransferDTOEntityMapper::map)
+                .toList();
+        return fundsTransferDTOS;
     }
 }

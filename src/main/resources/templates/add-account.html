@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SecureBank - Add Account</title>
-    <link rel="stylesheet" href="../static/css/styles.css">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
@@ -14,65 +14,30 @@
             <div class="sidebar-header">
                 <div class="logo">
                     <i class="fas fa-university"></i>
-                    <h2>SecureBank</h2>
+                    <h2>TrustWave</h2>
                 </div>
             </div>
-            
+
             <div class="user-profile">
                 <div class="profile-avatar">
                     <i class="fas fa-user-circle"></i>
                 </div>
                 <div class="profile-info">
-                    <h4 id="userName">John Doe</h4>
-                    <p id="userRole">Customer</p>
+                    <h4 id="userName" th:text="|${user.getFirstName()} ${user.getLastName()} |"></h4>
+                    <p id="userRole" th:text="${user.getUserRole()}"></p>
                 </div>
             </div>
-            
-            <ul class="nav-menu">
-                <li class="nav-item">
-                    <a href="dashboard.html" class="nav-link">
-                        <i class="fas fa-tachometer-alt"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-                <li class="nav-item active">
-                    <i class="fas fa-wallet"></i>
-                    <span>Add Account</span>
-                </li>
-                <li class="nav-item">
-                    <a href="transaction.html" class="nav-link">
-                        <i class="fas fa-exchange-alt"></i>
-                        <span>Transfer Money</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="pay-bill.html" class="nav-link">
-                        <i class="fas fa-file-invoice-dollar"></i>
-                        <span>Pay Bills</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="dashboard.html#profile" class="nav-link">
-                        <i class="fas fa-user-cog"></i>
-                        <span>Profile</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="dashboard.html#settings" class="nav-link">
-                        <i class="fas fa-cog"></i>
-                        <span>Settings</span>
-                    </a>
-                </li>
-            </ul>
-            
+
             <div class="sidebar-footer">
-                <button class="btn btn-secondary" onclick="logout()">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Logout</span>
-                </button>
+                <a th:href="@{/auth/logout}">
+                    <button class="btn btn-secondary">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </button>
+                </a>
             </div>
         </nav>
-        
+
         <!-- Main Content -->
         <main class="main-content">
             <!-- Header -->
@@ -82,7 +47,7 @@
                     <p>Create a new bank account to manage your finances</p>
                 </div>
                 <div class="header-right">
-                    <a href="dashboard.html" class="btn btn-secondary">
+                    <a th:href="@{/customer/dashboard}" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i>
                         Back to Dashboard
                     </a>
@@ -98,54 +63,29 @@
                                 <h2>Account Information</h2>
                                 <p>Please provide the details for your new account</p>
                             </div>
-                            
-                            <form id="accountForm" class="account-form">
+
+                            <form th:object="${accountDTO}" th:action="@{/account/create}" method="post" id="accountForm" class="account-form">
                                 <div class="form-group">
                                     <label for="accountType">Account Type</label>
-                                    <select id="accountType" name="accountType" required>
+                                    <select th:field="*{accountType}" id="accountType" required>
                                         <option value="">Select Account Type</option>
                                         <option value="SAVINGS">Savings Account</option>
                                         <option value="CHECKING">Checking Account</option>
                                         <option value="BUSINESS">Business Account</option>
                                         <option value="LOAN">Loan Account</option>
                                     </select>
-                                    <div class="form-help">
-                                        <i class="fas fa-info-circle"></i>
-                                        <span>Choose the type of account that best fits your needs</span>
-                                    </div>
                                 </div>
-                                
+
                                 <div class="form-group">
-                                    <label for="initialBalance">Initial Balance</label>
+                                    <label for="balance">Initial Balance</label>
                                     <div class="input-wrapper">
                                         <i class="fas fa-dollar-sign"></i>
-                                        <input type="number" id="initialBalance" name="initialBalance" step="0.01" value="0" placeholder="0.00">
-                                    </div>
-                                    <div class="form-help">
-                                        <i class="fas fa-info-circle"></i>
-                                        <span>Enter the amount you want to deposit initially (minimum $0)</span>
+                                        <input type="number" id="balance" th:field="*{balance}" step="0.01" value="0" placeholder="0.00" min="1000">
                                     </div>
                                 </div>
-                                
-                                <div class="form-group">
-                                    <label for="accountName">Account Name (Optional)</label>
-                                    <input type="text" id="accountName" name="accountName" placeholder="e.g., My Savings, Emergency Fund">
-                                    <div class="form-help">
-                                        <i class="fas fa-info-circle"></i>
-                                        <span>Give your account a custom name for easy identification</span>
-                                    </div>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label class="checkbox-wrapper">
-                                        <input type="checkbox" id="termsAccepted" required>
-                                        <span class="checkmark"></span>
-                                        I agree to the <a href="#" class="link">Terms and Conditions</a> and <a href="#" class="link">Privacy Policy</a>
-                                    </label>
-                                </div>
-                                
+
                                 <div class="form-actions">
-                                    <a href="dashboard.html" class="btn btn-secondary">
+                                    <a th:href="@{/customer/dashboard}" class="btn btn-secondary">
                                         <i class="fas fa-times"></i>
                                         Cancel
                                     </a>
@@ -155,6 +95,7 @@
                                     </button>
                                 </div>
                             </form>
+
                         </div>
                         
                         <!-- Account Benefits -->
@@ -197,39 +138,9 @@
         </main>
     </div>
     
-    <script src="../static/js/dashboard.js"></script>
-    <script src="../static/js/animations.js"></script>
+    <script src="/js/dashboard.js"></script>
+    <script src="/js/animations.js"></script>
     <script>
-        // Handle form submission
-        document.getElementById('accountForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(this);
-            const accountData = {
-                accountType: formData.get('accountType'),
-                initialBalance: parseFloat(formData.get('initialBalance')),
-                accountName: formData.get('accountName')
-            };
-            
-            // Show loading state
-            const submitBtn = this.querySelector('button[type="submit"]');
-            const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
-            submitBtn.disabled = true;
-            
-            // Simulate API call
-            setTimeout(() => {
-                // Reset button
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-                
-                // Show success message
-                alert('Account created successfully! You will be redirected to the dashboard.');
-                
-                // Redirect to dashboard
-                window.location.href = 'dashboard.html';
-            }, 2000);
-        });
         
         // Handle account type change
         document.getElementById('accountType').addEventListener('change', function() {

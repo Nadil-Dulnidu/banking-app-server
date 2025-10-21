@@ -414,85 +414,16 @@ class AdminDashboardManager {
     loadUsers() {
         const container = document.getElementById('usersTableBody');
         if (!container) return;
-
-        container.innerHTML = this.users.map(user => `
-            <tr>
-                <td>${user.id}</td>
-                <td>${user.username}</td>
-                <td>${user.firstName} ${user.lastName}</td>
-                <td>${user.email}</td>
-                <td><span class="role-badge ${user.userRole.toLowerCase()}">${user.userRole}</span></td>
-                <td><span class="status-badge ${user.status.toLowerCase()}">${user.status}</span></td>
-                <td>${user.lastLogin.toLocaleDateString()}</td>
-                <td class="action-buttons">
-                    <button class="btn btn-sm btn-primary" onclick="editUser(${user.id})">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="btn btn-sm btn-warning" onclick="suspendUser(${user.id})">
-                        <i class="fas fa-ban"></i>
-                    </button>
-                    <button class="btn btn-sm btn-danger" onclick="deleteUser(${user.id})">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </td>
-            </tr>
-        `).join('');
     }
 
     loadAccounts() {
         const container = document.getElementById('accountsTableBody');
         if (!container) return;
-
-        container.innerHTML = this.accounts.map(account => `
-            <tr>
-                <td>${account.id}</td>
-                <td>${account.accountNumber}</td>
-                <td><span class="type-badge ${account.accountType.toLowerCase()}">${account.accountType}</span></td>
-                <td>${account.ownerName}</td>
-                <td>$${account.balance.toLocaleString()}</td>
-                <td><span class="status-badge ${account.status.toLowerCase()}">${account.status}</span></td>
-                <td>${account.createdAt.toLocaleDateString()}</td>
-                <td class="action-buttons">
-                    <button class="btn btn-sm btn-primary" onclick="viewAccount(${account.id})">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                    <button class="btn btn-sm btn-warning" onclick="suspendAccount(${account.id})">
-                        <i class="fas fa-ban"></i>
-                    </button>
-                    <button class="btn btn-sm btn-danger" onclick="closeAccount(${account.id})">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </td>
-            </tr>
-        `).join('');
     }
 
     loadTransactions() {
         const container = document.getElementById('transactionsTableBody');
         if (!container) return;
-
-        container.innerHTML = this.transactions.map(transaction => `
-            <tr>
-                <td>${transaction.id}</td>
-                <td>${transaction.fromAccount}</td>
-                <td>${transaction.toAccount}</td>
-                <td>$${transaction.amount.toFixed(2)}</td>
-                <td><span class="type-badge ${transaction.transferType.toLowerCase()}">${transaction.transferType}</span></td>
-                <td><span class="status-badge ${transaction.status.toLowerCase()}">${transaction.status}</span></td>
-                <td>${transaction.createdAt.toLocaleDateString()}</td>
-                <td class="action-buttons">
-                    <button class="btn btn-sm btn-primary" onclick="viewTransaction(${transaction.id})">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                    <button class="btn btn-sm btn-success" onclick="approveTransaction(${transaction.id})">
-                        <i class="fas fa-check"></i>
-                    </button>
-                    <button class="btn btn-sm btn-danger" onclick="rejectTransaction(${transaction.id})">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </td>
-            </tr>
-        `).join('');
     }
 
     loadAuditLogs() {

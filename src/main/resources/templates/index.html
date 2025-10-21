@@ -37,6 +37,9 @@
                     <li class="nav-item">
                         <a th:href="@{/auth/registerForm}" class="nav-link nav-register">Sign Up</a>
                     </li>
+                    <li class="nav-item">
+                        <a th:href="@{${dashboardLink}}" class="nav-link nav-register">Dashboard</a>
+                    </li>
                 </ul>
                 
                 <div class="hamburger">
@@ -63,7 +66,7 @@
                     Experience banking reimagined with TrustWaveBank. Secure, smart, and simple financial solutions designed for your success.
                 </p>
                 <div class="hero-buttons">
-                    <a href="register.html" class="btn btn-primary btn-large">
+                    <a th:href="@{/auth/register}" class="btn btn-primary btn-large">
                         <i class="fas fa-user-plus"></i>
                         Get Started Today
                     </a>

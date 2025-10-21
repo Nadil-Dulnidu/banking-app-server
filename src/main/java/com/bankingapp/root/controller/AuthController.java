@@ -19,7 +19,6 @@ public class AuthController {
 
     @PostMapping("/register")
     public String registerUser(@ModelAttribute("userDTO") UserDTO userDTO) {
-        System.out.println(userDTO);
         authService.registerUser(userDTO);
         return "redirect:/auth/loginForm";
     }
@@ -28,16 +27,15 @@ public class AuthController {
     public String loginUser(Model model,
             @ModelAttribute("authRequestDTO") AuthRequestDTO authRequest,
             HttpServletRequest request) {
-        System.out.println(authRequest.getPassword());
         model.addAttribute("authRequestDTO", authRequest);
         authService.login(authRequest, request);
-        return "redirect:/";
+        return "redirect:/customer/dashboard";
     }
 
-    @PostMapping("/logout")
+    @GetMapping("/logout")
     public String logout(HttpServletRequest request) {
         request.getSession().invalidate();
-        return "redirect:/";
+        return "redirect:/auth/loginForm";
     }
 
     @GetMapping("/loginForm")
