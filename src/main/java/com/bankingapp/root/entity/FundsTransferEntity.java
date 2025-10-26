@@ -34,9 +34,8 @@ public class FundsTransferEntity {
     @NotBlank(message = "Beneficiary name must not be null")
     private String beneficiaryName;
 
-    @Column(name = "amount", nullable = false, columnDefinition = "DECIMAL(10,2) CHECK (amount > 100)")
+    @Column(name = "amount", nullable = false)
     @NotNull(message = "Amount must not be null")
-    @DecimalMin(value = "100.01", message = "Amount must be greater than 100")
     private Double amount;
 
     @Column(name = "description")

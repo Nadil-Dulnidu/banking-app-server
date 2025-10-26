@@ -1,18 +1,10 @@
 package com.bankingapp.root.controller;
 
-import com.bankingapp.root.dto.AccountDTO;
-import com.bankingapp.root.dto.BillPaymentDTO;
-import com.bankingapp.root.dto.FundsTransferDTO;
-import com.bankingapp.root.dto.UserDTO;
-import com.bankingapp.root.service.AccountService;
-import com.bankingapp.root.service.BillPaymentService;
-import com.bankingapp.root.service.FundsTransferService;
-import com.bankingapp.root.service.UserService;
+import com.bankingapp.root.dto.*;
+import com.bankingapp.root.service.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.security.Principal;
@@ -26,15 +18,21 @@ public class DashboardController {
     private final AccountService accountService;
     private final FundsTransferService fundsTransferService;
     private final BillPaymentService billPaymentService;
+    private final NotificationService notificationService;
+    private final LoanService loanService;
 
     public DashboardController(UserService userService,
                                AccountService accountService,
                                FundsTransferService fundsTransferService,
-                               BillPaymentService billPaymentService) {
+                               BillPaymentService billPaymentService,
+                               NotificationService notificationService,
+                               LoanService loanService) {
         this.userService = userService;
         this.accountService = accountService;
         this.fundsTransferService = fundsTransferService;
         this.billPaymentService = billPaymentService;
+        this.notificationService = notificationService;
+        this.loanService = loanService;
     }
 
     @GetMapping("/dashboard")
@@ -49,6 +47,10 @@ public class DashboardController {
         model.addAttribute("transferList", transfers);
         final  List<BillPaymentDTO> payments = billPaymentService.getPaymentsByUsername(username);
         model.addAttribute("paymentList", payments);
+        final List<NotificationDTO> notification = notificationService.getNotificationsByUsername(username);
+        model.addAttribute("notificationList", notification);
+        final List<LoanApplicationDTO> loanApplications = loanService.getLoanApplicationsByUsername(username);
+        model.addAttribute("loanApplicationList", loanApplications);
         return "dashboard";
     }
 }

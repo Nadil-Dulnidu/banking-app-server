@@ -1,10 +1,13 @@
 package com.bankingapp.root.controller;
 
+import com.bankingapp.root.common.Constants;
 import com.bankingapp.root.dto.AccountDTO;
 import com.bankingapp.root.dto.FundsTransferDTO;
+import com.bankingapp.root.dto.NotificationDTO;
 import com.bankingapp.root.dto.UserDTO;
 import com.bankingapp.root.service.AccountService;
 import com.bankingapp.root.service.FundsTransferService;
+import com.bankingapp.root.service.NotificationService;
 import com.bankingapp.root.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,12 +27,15 @@ public class FundsTransferController {
     private final FundsTransferService fundsTransferService;
     private final AccountService accountService;
     private final UserService userService;
+    private final NotificationService notificationService;
     public FundsTransferController(FundsTransferService fundsTransferService,
                                    AccountService accountService,
-                                   UserService userService) {
+                                   UserService userService,
+                                   NotificationService notificationService) {
         this.fundsTransferService = fundsTransferService;
         this.accountService = accountService;
         this.userService = userService;
+        this.notificationService = notificationService;
     }
 
     @PreAuthorize("hasRole('CUSTOMER')")
@@ -48,9 +54,20 @@ public class FundsTransferController {
     @PreAuthorize("hasRole('CUSTOMER')")
     @PostMapping("/create")
     public String createFundsTransfer(@ModelAttribute("transferForm") @Valid FundsTransferDTO fundsTransferDTO,
-                                      RedirectAttributes redirectAttributes) {
+                                      RedirectAttributes redirectAttributes, Principal principal) {
         try{
+            String username = principal.getName();
+            if (username == null) return "redirect:/auth/loginForm";
             fundsTransferService.createTransfer(fundsTransferDTO);
+            NotificationDTO notificationDTO = new NotificationDTO(
+                    username,
+                    "Funds Transfer Successful",
+                    Constants.NotificationType.TRANSACTION,
+                    "Funds transfer of amount " + fundsTransferDTO.getAmount() +
+                            " from account " + fundsTransferDTO.getFromAccount() +
+                            " to account " + fundsTransferDTO.getToAccount() +
+                            " completed successfully.");
+            notificationService.sendNotification(notificationDTO);
             return "redirect:/customer/dashboard?success=true";
         }catch (RuntimeException ex){
             redirectAttributes.addFlashAttribute("errMessage", ex.getMessage());

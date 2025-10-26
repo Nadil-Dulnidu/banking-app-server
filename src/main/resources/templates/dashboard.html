@@ -46,6 +46,10 @@
                     <i class="fas fa-file-invoice-dollar"></i>
                     <span>Bill Payments</span>
                 </li>
+                <li class="nav-item" data-section="loans">
+                    <i class="fas fa-hand-holding-usd"></i>
+                    <span>Loan Applications</span>
+                </li>
                 <li class="nav-item" data-section="profile">
                     <i class="fas fa-user-cog"></i>
                     <span>Profile</span>
@@ -70,10 +74,47 @@
                 </div>
                 <div class="header-right">
                     <div class="notifications">
-                        <button class="notification-btn">
+                        <button class="notification-btn" onclick="toggleNotificationDropdown()">
                             <i class="fas fa-bell"></i>
-                            <span class="notification-badge">3</span>
+                            <span class="notification-badge" th:text="${notificationList != null ? notificationList.size() : 0}">0</span>
                         </button>
+                        <div class="notification-dropdown" id="notificationDropdown">
+                            <div class="notification-header">
+                                <h4>Notifications</h4>
+                                <button class="btn btn-sm btn-secondary" onclick="markAllAsRead()">
+                                    <i class="fas fa-check-double"></i>
+                                    Mark All Read
+                                </button>
+                            </div>
+                            <div class="notification-list" th:if="${notificationList != null and !notificationList.isEmpty()}">
+                                <div class="notification-item" 
+                                     th:each="notification : ${notificationList}"
+                                     th:classappend="${!notification.getIsRead()} ? 'unread' : ''">
+                                    <div class="notification-content">
+                                        <div class="notification-title" th:text="${notification.getTitle()}">Notification Title</div>
+                                        <div class="notification-message" th:text="${notification.getMessage()}">Notification message</div>
+                                        <div class="notification-time" th:text="${#temporals.format(notification.getCreatedAt(), 'yyyy-MM-dd HH:mm')}">Time</div>
+                                    </div>
+                                    <div class="notification-actions">
+                                        <a th:href="'/notification/read/' + ${notification.getNotificationId()}">
+                                            <button class="btn btn-mark-read"
+                                                    th:if="${!notification.isRead}">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                        </a>
+                                        <a th:href="'/notification/delete/' + ${notification.getNotificationId()}">
+                                            <button class="btn btn-delete">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="notification-empty" th:if="${notificationList == null or notificationList.isEmpty()}">
+                                <i class="fas fa-bell-slash"></i>
+                                <p>No notifications</p>
+                            </div>
+                        </div>
                     </div>
                     <div class="quick-actions">
                         <a th:href="@{/transfer/transactionForm}" class="btn btn-primary">
@@ -94,7 +135,7 @@
                                 <i class="fas fa-wallet"></i>
                             </div>
                             <div class="stat-content">
-                                <h3>$12,450.00</h3>
+                                <h3>LKR 12,450.00</h3>
                                 <p>Total Balance</p>
                             </div>
                         </div>
@@ -103,7 +144,7 @@
                                 <i class="fas fa-arrow-up"></i>
                             </div>
                             <div class="stat-content">
-                                <h3>$2,340.00</h3>
+                                <h3>LKR 2,340.00</h3>
                                 <p>This Month Income</p>
                             </div>
                         </div>
@@ -112,7 +153,7 @@
                                 <i class="fas fa-arrow-down"></i>
                             </div>
                             <div class="stat-content">
-                                <h3>$890.00</h3>
+                                <h3>LKR 890.00</h3>
                                 <p>This Month Expenses</p>
                             </div>
                         </div>
@@ -151,8 +192,8 @@
                                     <!-- Dynamic amount with class and formatted currency -->
                                     <div class="transaction-amount"
                                          th:classappend="${transfer.getStatus() == 'COMPLETED'} ? ' positive' : ' negative'"
-                                         th:text="${#numbers.formatDecimal(transfer.getAmount(), 1, 'COMMA', 2, 'POINT')}">
-                                        $0.00
+                                         th:text="'LKR ' + ${#numbers.formatDecimal(transfer.getAmount(), 1, 'COMMA', 2, 'POINT')}">
+                                        LKR 0.00
                                     </div>
                                 </div>
                             </div>
@@ -175,6 +216,10 @@
                                     <i class="fas fa-plus"></i>
                                     <span>Open Account</span>
                                 </a>
+                                <a th:href="@{/loan/loanApplication}" class="quick-action-btn">
+                                    <i class="fas fa-hand-holding-usd"></i>
+                                    <span>Apply Loan</span>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -190,13 +235,18 @@
                         </a>
                     </div>
                     
-                    <div class="accounts-grid" id="accountsGrid" th:each="account : ${accountList}">
-                        <div class="account-card">
+                    <div class="accounts-grid" id="accountsGrid">
+                        <div class="account-card" th:each="account : ${accountList}">
                             <div class="account-header">
                                 <span class="account-type" th:text="${account.getAccountType()}"></span>
-                                <span class="account-number" th:text="${account.getAccountNumber()}"></span>
                             </div>
-                            <div class="account-balance" th:text="'Rs.' + ${#numbers.formatDecimal(account.getBalance(), 1, 'COMMA', 2, 'POINT')}"></div>
+                            
+                            <div class="account-number" th:text="${account.getAccountNumber()}"></div>
+                            
+                            <div class="account-balance"
+                                 th:text="'LKR ' + ${#numbers.formatDecimal(account.getBalance(), 1, 'COMMA', 2, 'POINT')}">
+                            </div>
+                            
                             <div class="account-status">
                                 <span class="status-dot" th:text="${account.getStatus()}"></span>
                             </div>
@@ -213,11 +263,11 @@
                             New Transfer
                         </a>
                     </div>
-                    <div class="transfers-grid" id="transfersGrid" th:each="transfer : ${transferList}">
-                        <div class="transfer-card">
+                    <div class="transfers-grid" id="transfersGrid">
+                        <div class="transfer-card" th:each="transfer : ${transferList}">
                             <div class="transfer-header">
                                 <span class="transfer-status" th:text="${transfer.getStatus()}"></span>
-                                <span class="transfer-amount" th:text="${#numbers.formatCurrency(transfer.getAmount())}"></span>
+                                <span class="transfer-amount" th:text="'LKR ' + ${#numbers.formatDecimal(transfer.getAmount(), 1, 'COMMA', 2, 'POINT')}"></span>
                             </div>
                             <div class="transfer-details">
                                 <div class="transfer-row">
@@ -241,7 +291,7 @@
                                     <span class="transfer-value" th:text="${#temporals.format(transfer.getCreatedAt(), 'yyyy-MM-dd HH:mm')}"></span>
                                 </div>
                                 <div class="transfer-row">
-                                    <span class="transfer-label">Schedule :</span>
+                                    <span class="transfer-label">Schedule:</span>
                                     <span class="transfer-value"
                                           th:text="${transfer.scheduledAt != null ?
                                           #temporals.format(transfer.scheduledAt, 'yyyy-MM-dd HH:mm')
@@ -252,10 +302,16 @@
                             <div class="transfer-actions" th:if="${transfer.getStatus().name() == 'PENDING'}">
                                 <button class="btn-edit"
                                         th:attr="data-id=${transfer.getId()}, data-amount=${transfer.getAmount()}, data-status=${transfer.getStatus().name()}, data-schedule=${transfer.getScheduledAt()}"
-                                        onclick="openEditModal(this)">Edit</button>
+                                        onclick="openEditModal(this)">
+                                    <i class="fas fa-check"></i>
+                                    Confirm
+                                </button>
 
                                 <form th:action="@{/transfer/delete/{id}(id=${transfer.getId()})}" method="post" onsubmit="return confirm('Are you sure you want to delete this transfer?');">
-                                    <button class="btn-delete" type="submit">Delete</button>
+                                    <button class="btn-delete" type="submit">
+                                        <i class="fas fa-trash"></i>
+                                        Delete
+                                    </button>
                                 </form>
                             </div>
                         </div>
@@ -271,45 +327,107 @@
                             Pay Bill
                         </a>
                     </div>
-                    <div class="bills-grid" id="billsGrid" th:each="bill : ${paymentList}">
-                    <div class="bill-card">
-                        <div class="bill-header">
-                            <span class="bill-frequency" th:text="${bill.getPaymentFrequency()}"></span>
-                        </div>
+                    <div class="bills-grid" id="billsGrid">
+                        <div class="bill-card" th:each="bill : ${paymentList}">
+                            <div class="bill-header">
+                                <span class="bill-frequency" th:text="${bill.getPaymentFrequency()}"></span>
+                            </div>
 
-                        <div class="bill-name" th:text="${bill.getBillerName()}"></div>
+                            <div class="bill-name" th:text="${bill.getBillerName()}"></div>
 
-                        <div class="bill-amount"
-                             th:text="'Rs.' + ${#numbers.formatDecimal(bill.getAmount(), 1, 'COMMA', 2, 'POINT')}">
-                        </div>
+                            <div class="bill-amount"
+                                 th:text="'LKR ' + ${#numbers.formatDecimal(bill.getAmount(), 1, 'COMMA', 2, 'POINT')}">
+                            </div>
 
-                        <div class="bill-due-date"
-                             th:text="${#temporals.format(bill.getPaymentDate(), 'yyyy-MM-dd HH:mm')}">
-                        </div>
+                            <div class="bill-due-date"
+                                 th:text="${#temporals.format(bill.getPaymentDate(), 'yyyy-MM-dd HH:mm')}">
+                            </div>
 
-                        <div class="bill-actions" th:if="${bill.getPaymentStatus()!= 'PENDING'}">
-                            <span class="status-label" th:text="${bill.getPaymentStatus().name()}"></span>
-                        </div>
+                            <div class="bill-actions" th:if="${bill.getPaymentStatus()!= 'PENDING'}">
+                                <span class="status-label" th:text="${bill.getPaymentStatus().name()}"></span>
+                            </div>
 
-                        <div class="bill-actions" th:if="${bill.getPaymentStatus().name() == 'PENDING'}">
-                            <form th:action="@{/bill-payment/confirm/{id}(id=${bill.getId()})}" method="post"
-                                  onsubmit="return confirm('Are you sure you want to confirm this bill payment?');">
-                                <button type="submit" class="btn-delete" style="background-color: #4caf50">
-                                    <i class="fas fa-check"></i> Confirm
-                                </button>
-                            </form>
+                            <div class="bill-actions" th:if="${bill.getPaymentStatus().name() == 'PENDING'}">
+                                <form th:action="@{/bill-payment/confirm/{id}(id=${bill.getId()})}" method="post"
+                                      onsubmit="return confirm('Are you sure you want to confirm this bill payment?');">
+                                    <button type="submit" class="btn-delete" style="background-color: #4caf50">
+                                        <i class="fas fa-check"></i> Confirm
+                                    </button>
+                                </form>
 
-                            <form th:action="@{/bill-payment/delete/{id}(id=${bill.getId()})}" method="post"
-                                  onsubmit="return confirm('Are you sure you want to delete this bill?');">
-                                <button type="submit" class="btn-delete">
-                                    <i class="fas fa-trash"></i> Delete
-                                </button>
-                            </form>
+                                <form th:action="@{/bill-payment/delete/{id}(id=${bill.getId()})}" method="post"
+                                      onsubmit="return confirm('Are you sure you want to delete this bill?');">
+                                    <button type="submit" class="btn-delete">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
-                </div>
 
 
+                </section>
+                
+                <!-- Loans Section -->
+                <section id="loans-section" class="content-section">
+                    <div class="section-header">
+                        <h2>Loan Applications</h2>
+                        <a th:href="@{/loan/loanApplication}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Apply for Loan
+                        </a>
+                    </div>
+                    <div class="loans-grid" id="loansGrid">
+                        <div class="loan-card" th:each="loan : ${loanApplicationList}">
+                            <div class="loan-header">
+                                <span class="loan-type" th:text="${loan.getLoanType()}"></span>
+                                <span class="loan-status" th:text="${loan.getStatus()}"></span>
+                            </div>
+                            
+                            <div class="loan-amount"
+                                 th:text="'LKR ' + ${#numbers.formatDecimal(loan.getAmount(), 1, 'COMMA', 2, 'POINT')}">
+                            </div>
+                            
+                            <div class="loan-details">
+                                <div class="loan-row">
+                                    <span class="loan-label">Term:</span>
+                                    <span class="loan-value" th:text="${loan.getTermMonths()} + ' months'"></span>
+                                </div>
+                                <div class="loan-row">
+                                    <span class="loan-label">Purpose:</span>
+                                    <span class="loan-value" th:text="${loan.getPurpose()}"></span>
+                                </div>
+                                <div class="loan-row">
+                                    <span class="loan-label">Annual Income:</span>
+                                    <span class="loan-value" th:text="'LKR ' + ${#numbers.formatDecimal(loan.getAnnualIncome(), 1, 'COMMA', 2, 'POINT')}"></span>
+                                </div>
+                                <div class="loan-row">
+                                    <span class="loan-label">Applied Date:</span>
+                                    <span class="loan-value" th:text="${#temporals.format(loan.getCreatedAt(), 'yyyy-MM-dd HH:mm')}"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="loan-actions" th:if="${loan.getStatus().name() == 'PENDING'}">
+                                <button class="btn-edit"
+                                        th:attr="data-id=${loan.getId()}, data-amount=${loan.getAmount()}, data-term=${loan.getTermMonths()}, data-purpose=${loan.getPurpose()}, data-income=${loan.getAnnualIncome()}"
+                                        onclick="openEditLoanModal(this)">
+                                    <i class="fas fa-edit"></i>
+                                    Edit
+                                </button>
+                                
+                                <form th:action="@{/loan/delete/{id}(id=${loan.getId()})}" method="get" onsubmit="return confirm('Are you sure you want to delete this loan application?');">
+                                    <button class="btn-delete" type="submit">
+                                        <i class="fas fa-trash"></i>
+                                        Delete
+                                    </button>
+                                </form>
+                            </div>
+                            
+                            <div class="loan-actions" th:if="${loan.getStatus().name() != 'PENDING'}">
+                                <span class="status-label" th:text="${loan.getStatus().name()}"></span>
+                            </div>
+                        </div>
+                    </div>
                 </section>
                 
                 <!-- Profile Section -->
@@ -368,7 +486,7 @@
                                 </button>
                             </div>
                         </form>
-                        <a th:href="@{/user/delete}"><button class="btn btn-primary"><i class="fas fa-trash"></i>Delete Profile</button></a>
+
                     </div>
                 </section>
                 
@@ -429,6 +547,43 @@
         </div>
     </div>
 
+    <!-- Edit Loan Modal -->
+    <div id="editLoanModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEditLoanModal()">&times;</span>
+            <h3>Edit Loan Application</h3>
+
+            <form id="editLoanForm" method="post" th:action="@{/loan/edit/{id}}">
+                <input type="hidden" id="editLoanId" name="id" />
+
+                <div class="form-group">
+                    <label for="editLoanAmount">Amount:</label>
+                    <input type="number" id="editLoanAmount" name="amount" required step="0.01" />
+                </div>
+
+                <div class="form-group">
+                    <label for="editLoanTerm">Term (months):</label>
+                    <input type="number" id="editLoanTerm" name="termMonths" required min="1" max="360" />
+                </div>
+
+                <div class="form-group">
+                    <label for="editLoanPurpose">Purpose:</label>
+                    <textarea id="editLoanPurpose" name="purpose" required rows="3"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="editLoanIncome">Annual Income:</label>
+                    <input type="number" id="editLoanIncome" name="annualIncome" required step="0.01" />
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-save">Save Changes</button>
+                    <button type="button" class="btn-cancel" onclick="closeEditLoanModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script src="/js/dashboard.js"></script>
     <script src="/js/animations.js"></script>
 
@@ -450,6 +605,76 @@
         function closeEditModal() {
             document.getElementById('editModal').style.display = 'none';
         }
+
+        function openEditLoanModal(button) {
+            const id = button.getAttribute('data-id');
+            const amount = button.getAttribute('data-amount');
+            const term = button.getAttribute('data-term');
+            const purpose = button.getAttribute('data-purpose');
+            const income = button.getAttribute('data-income');
+
+            document.getElementById('editLoanId').value = id;
+            document.getElementById('editLoanAmount').value = amount;
+            document.getElementById('editLoanTerm').value = term;
+            document.getElementById('editLoanPurpose').value = purpose;
+            document.getElementById('editLoanIncome').value = income;
+
+            // Update form action with the loan ID
+            const form = document.getElementById('editLoanForm');
+            form.action = form.action.replace('{id}', id);
+
+            document.getElementById('editLoanModal').style.display = 'flex';
+        }
+
+        function closeEditLoanModal() {
+            document.getElementById('editLoanModal').style.display = 'none';
+        }
+
+        // Notification functions
+        function toggleNotificationDropdown() {
+            const dropdown = document.getElementById('notificationDropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        function markAsRead(notificationId) {
+            window.location.href = '/notification/read/' + notificationId;
+        }
+
+        function deleteNotification(notificationId) {
+            if (confirm('Are you sure you want to delete this notification?')) {
+                window.location.href = '/notification/delete/' + notificationId;
+            }
+        }
+
+        function markAllAsRead() {
+            if (confirm('Are you sure you want to mark all notifications as read?')) {
+                // Get all unread notifications and mark them as read
+                const unreadNotifications = document.querySelectorAll('.notification-item.unread');
+                unreadNotifications.forEach(notification => {
+                    const markReadBtn = notification.querySelector('.btn-mark-read');
+                    if (markReadBtn) {
+                        const onclickAttr = markReadBtn.getAttribute('onclick');
+                        if (onclickAttr) {
+                            // Extract notification ID from onclick attribute
+                            const match = onclickAttr.match(/markAsRead\((\d+)\)/);
+                            if (match) {
+                                markAsRead(match[1]);
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('notificationDropdown');
+            const notificationBtn = document.querySelector('.notification-btn');
+            
+            if (!dropdown.contains(event.target) && !notificationBtn.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
     </script>
 </body>
 </html>

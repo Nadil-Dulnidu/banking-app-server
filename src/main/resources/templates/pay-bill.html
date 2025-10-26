@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SecureBank - Pay Bill</title>
-    <link rel="stylesheet" href="/css/styles.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <title>TrustWave - Pay Bills</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link th:href="@{https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css}" rel="stylesheet">
 </head>
 <body>
     <div class="dashboard-container">
@@ -23,18 +23,18 @@
                     <i class="fas fa-user-circle"></i>
                 </div>
                 <div class="profile-info">
-                    <h4 id="userName" th:text="|${user.getFirstName()} ${user.getLastName()} |"></h4>
+                    <h4 id="userName" th:text="|${user.getFirstName()} ${user.getLastName()}|"></h4>
                     <p id="userRole" th:text="${user.getUserRole()}"></p>
                 </div>
             </div>
             
             <div class="sidebar-footer">
-               <a th:href="@{/auth/logout}">
-                   <button class="btn btn-secondary">
-                       <i class="fas fa-sign-out-alt"></i>
-                       <span>Logout</span>
-                   </button>
-               </a>
+                <a th:href="@{/auth/logout}">
+                    <button class="btn btn-secondary">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </button>
+                </a>
             </div>
         </nav>
         
@@ -60,68 +60,154 @@
                     <div class="form-container">
                         <div class="form-card">
                             <div class="form-header">
-                                <h2>Bill Payment Details</h2>
+                                <h2><i class="fas fa-file-invoice-dollar"></i> Bill Payment Details</h2>
                                 <p>Enter the bill information to make a payment</p>
                             </div>
                             
                             <form id="billPaymentForm" class="bill-payment-form" method="post" th:action="@{/bill-payment/create}" th:object="${billPayment}">
-                                <div class="form-group">
-                                    <label for="billerName">Biller Name</label>
-                                    <input id="billerName" name="billerName" th:field="*{billerName}" required>
-                                    <div class="form-help">
-                                        <i class="fas fa-info-circle"></i>
-                                        <span>Enter the company you want to pay</span>
+                                <!-- Biller Information Section -->
+                                <div class="form-section">
+                                    <h3 class="section-title">
+                                        <i class="fas fa-building"></i>
+                                        Biller Information
+                                    </h3>
+                                    
+                                    <div class="form-group">
+                                        <label for="billerName">
+                                            <i class="fas fa-building"></i>
+                                            Biller Name
+                                        </label>
+                                        <div class="input-wrapper">
+                                            <i class="fas fa-handshake"></i>
+                                            <input type="text" id="billerName" name="billerName" th:field="*{billerName}" 
+                                                   placeholder="Enter company or service provider name" required>
+                                        </div>
+                                        <div class="form-help">
+                                            <i class="fas fa-info-circle"></i>
+                                            <span>Enter the company you want to pay (e.g., Electric Company, Water Department)</span>
+                                        </div>
                                     </div>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="billAmount">Bill Amount</label>
-                                    <div class="input-wrapper">
-                                        <i class="fas fa-dollar-sign"></i>
-                                        <input type="number" id="billAmount" name="amount" step="0.01" placeholder="0.00" th:field="*{amount}" required>
-                                    </div>
-                                    <div class="form-help">
-                                        <i class="fas fa-info-circle"></i>
-                                        <span>Enter the amount you want to pay</span>
-                                    </div>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="billAccount">From Account</label>
-                                    <select id="billAccount" name="accountId" required th:field="*{accountNumber}">
-                                        <option value="" disabled selected>Select an account</option>
-                                        <option th:each="account : ${accounts}"
-                                                th:value="${account.getAccountNumber()}"
-                                                th:text="${account.getAccountNumber()}">
-                                        </option>
-                                    </select>
-                                    <div class="form-help">
-                                        <i class="fas fa-info-circle"></i>
-                                        <span>Choose the account to pay from</span>
-                                    </div>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="paymentFrequency">Payment Frequency</label>
-                                    <select id="paymentFrequency" name="paymentFrequency" th:field="*{paymentFrequency}" required>
-                                        <option value="ONE_TIME">One Time Payment</option>
-                                    </select>
-                                    <div class="form-help">
-                                        <i class="fas fa-info-circle"></i>
-                                        <span>Choose between one-time or recurring payment</span>
-                                    </div>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label class="checkbox-wrapper">
-                                        <input type="checkbox" id="termsAccepted" required>
-                                        <span class="checkmark"></span>
-                                        I confirm that the bill payment details are correct and I agree to the <a href="#" class="link">Terms and Conditions</a>
-                                    </label>
                                 </div>
 
-                                <div th:text="${errMessage}" style="color: #dc3545"></div>
+                                <!-- Payment Details Section -->
+                                <div class="form-section">
+                                    <h3 class="section-title">
+                                        <i class="fas fa-credit-card"></i>
+                                        Payment Details
+                                    </h3>
+                                    
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="billAmount">
+                                                <i class="fas fa-dollar-sign"></i>
+                                                Bill Amount
+                                            </label>
+                                            <div class="input-wrapper">
+                                                <i class="fas fa-money-bill-wave"></i>
+                                                <input type="number" id="billAmount" name="amount" step="0.01"
+                                                       placeholder="0.00" th:field="*{amount}" required>
+                                            </div>
+                                            <div class="form-help">
+                                                <i class="fas fa-info-circle"></i>
+                                                <span>Enter the amount you want to pay</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="paymentFrequency">
+                                                <i class="fas fa-calendar-alt"></i>
+                                                Payment Frequency
+                                            </label>
+                                            <div class="input-wrapper">
+                                                <i class="fas fa-repeat"></i>
+                                                <select id="paymentFrequency" name="paymentFrequency" th:field="*{paymentFrequency}" required>
+                                                    <option value="ONE_TIME">One Time Payment</option>
+                                                    <option value="MONTHLY">Monthly Recurring</option>
+                                                    <option value="QUARTERLY">Quarterly Recurring</option>
+                                                    <option value="YEARLY">Yearly Recurring</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-help">
+                                                <i class="fas fa-info-circle"></i>
+                                                <span id="frequencyHelp">Choose between one-time or recurring payment</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Account Selection Section -->
+                                <div class="form-section">
+                                    <h3 class="section-title">
+                                        <i class="fas fa-wallet"></i>
+                                        Account Selection
+                                    </h3>
+                                    
+                                    <div class="form-group">
+                                        <label for="billAccount">
+                                            <i class="fas fa-credit-card"></i>
+                                            From Account
+                                        </label>
+                                        <div class="input-wrapper">
+                                            <i class="fas fa-university"></i>
+                                            <select id="billAccount" name="accountId" required th:field="*{accountNumber}">
+                                                <option value="" disabled selected>Select your account</option>
+                                                <option th:each="account : ${accounts}"
+                                                        th:value="${account.getAccountNumber()}"
+                                                        th:text="${account.getAccountNumber() + ' - ' + account.getAccountType() + ' (LKR ' + #numbers.formatDecimal(account.getBalance(), 1, 'COMMA', 2, 'POINT') + ')'}">
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="form-help">
+                                            <i class="fas fa-info-circle"></i>
+                                            <span>Choose the account to pay from (balance shown in parentheses)</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Payment Schedule Section -->
+                                <div class="form-section" id="scheduleSection" style="display: none;">
+                                    <h3 class="section-title">
+                                        <i class="fas fa-calendar-check"></i>
+                                        Payment Schedule
+                                    </h3>
+                                    
+                                    <div class="form-group">
+                                        <label for="paymentDate">
+                                            <i class="fas fa-calendar"></i>
+                                            Next Payment Date
+                                        </label>
+                                        <div class="input-wrapper">
+                                            <i class="fas fa-clock"></i>
+                                            <input type="date" id="paymentDate" name="paymentDate" th:field="*{paymentDate}">
+                                        </div>
+                                        <div class="form-help">
+                                            <i class="fas fa-info-circle"></i>
+                                            <span>Select when the recurring payment should start</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Terms and Conditions -->
+                                <div class="form-section">
+                                    <div class="form-group">
+                                        <label class="checkbox-wrapper">
+                                            <input type="checkbox" id="termsAccepted" required>
+                                            <span class="checkmark"></span>
+                                            <span class="checkbox-text">
+                                                I confirm that the bill payment details are correct and I agree to the 
+                                                <a href="#" class="terms-link">Terms and Conditions</a>
+                                            </span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Error Message -->
+                                <div th:if="${errMessage}" class="error-message">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <span th:text="${errMessage}"></span>
+                                </div>
                                 
+                                <!-- Form Actions -->
                                 <div class="form-actions">
                                     <a th:href="@{/customer/dashboard}" class="btn btn-secondary">
                                         <i class="fas fa-times"></i>
@@ -135,36 +221,64 @@
                             </form>
                         </div>
                         
-                        <!-- Bill Payment Information -->
+                        <!-- Bill Payment Information Card -->
                         <div class="info-card">
-                            <h3>Bill Payment Information</h3>
+                            <div class="info-header">
+                                <h3><i class="fas fa-info-circle"></i> Bill Payment Information</h3>
+                            </div>
                             <div class="info-list">
                                 <div class="info-item">
-                                    <i class="fas fa-clock"></i>
-                                    <div>
+                                    <div class="info-icon">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    <div class="info-content">
                                         <h4>Processing Time</h4>
                                         <p>Most payments: 1-2 business days<br>Some utilities: 3-5 business days</p>
                                     </div>
                                 </div>
                                 <div class="info-item">
-                                    <i class="fas fa-shield-alt"></i>
-                                    <div>
+                                    <div class="info-icon">
+                                        <i class="fas fa-shield-alt"></i>
+                                    </div>
+                                    <div class="info-content">
                                         <h4>Security</h4>
                                         <p>All payments are secure and encrypted</p>
                                     </div>
                                 </div>
                                 <div class="info-item">
-                                    <i class="fas fa-dollar-sign"></i>
-                                    <div>
+                                    <div class="info-icon">
+                                        <i class="fas fa-dollar-sign"></i>
+                                    </div>
+                                    <div class="info-content">
                                         <h4>Fees</h4>
-                                        <p>Most bill payments: Free<br>Some services: $1.50 fee</p>
+                                        <p>Most bill payments: Free<br>Some services: LKR 50 fee</p>
                                     </div>
                                 </div>
                                 <div class="info-item">
-                                    <i class="fas fa-calendar-alt"></i>
-                                    <div>
+                                    <div class="info-icon">
+                                        <i class="fas fa-calendar-alt"></i>
+                                    </div>
+                                    <div class="info-content">
                                         <h4>Recurring Payments</h4>
                                         <p>Set up automatic monthly payments</p>
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-icon">
+                                        <i class="fas fa-receipt"></i>
+                                    </div>
+                                    <div class="info-content">
+                                        <h4>Receipts</h4>
+                                        <p>Digital receipts sent to your email</p>
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-icon">
+                                        <i class="fas fa-headset"></i>
+                                    </div>
+                                    <div class="info-content">
+                                        <h4>Support</h4>
+                                        <p>24/7 customer support available</p>
                                     </div>
                                 </div>
                             </div>
@@ -175,45 +289,35 @@
         </main>
     </div>
     
-    <script src="/js/dashboard.js"></script>
     <script src="/js/animations.js"></script>
     <script>
-        // Handle biller selection
-        document.getElementById('billerName').addEventListener('change', function() {
-            const customBillerGroup = document.getElementById('customBillerGroup');
-            const customBillerInput = document.getElementById('customBillerName');
-            
-            if (this.value === 'Other') {
-                customBillerGroup.style.display = 'block';
-                customBillerInput.required = true;
-            } else {
-                customBillerGroup.style.display = 'none';
-                customBillerInput.required = false;
-                customBillerInput.value = '';
-            }
-        });
-        
         // Handle payment frequency change
         document.getElementById('paymentFrequency').addEventListener('change', function() {
-            const helpText = this.parentNode.querySelector('.form-help span');
+            const helpText = document.getElementById('frequencyHelp');
+            const scheduleSection = document.getElementById('scheduleSection');
+            const paymentDateInput = document.getElementById('paymentDate');
             
             if (this.value === 'ONE_TIME') {
                 helpText.textContent = 'Make a one-time payment for this bill';
-            } else if (this.value === 'MONTHLY') {
-                helpText.textContent = 'Set up automatic monthly payments for this bill';
+                scheduleSection.style.display = 'none';
+                paymentDateInput.required = false;
+            } else {
+                helpText.textContent = 'Set up automatic recurring payments for this bill';
+                scheduleSection.style.display = 'block';
+                paymentDateInput.required = true;
+                
+                // Set minimum date to today
+                const today = new Date().toISOString().split('T')[0];
+                paymentDateInput.setAttribute('min', today);
+                paymentDateInput.value = today;
             }
         });
-        
-        // Set default payment date to today
-        document.getElementById('paymentDate').valueAsDate = new Date();
-        
-        // Format amount input
-        document.getElementById('billAmount').addEventListener('input', function() {
-            let value = this.value;
-            if (value && !isNaN(value)) {
-                // Format to 2 decimal places
-                this.value = parseFloat(value).toFixed(2);
-            }
+
+        // Initialize form
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('paymentDate').setAttribute('min', today);
         });
     </script>
 </body>

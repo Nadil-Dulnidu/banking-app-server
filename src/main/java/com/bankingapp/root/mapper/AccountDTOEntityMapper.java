@@ -1,6 +1,7 @@
 package com.bankingapp.root.mapper;
 
 import com.bankingapp.root.dto.AccountDTO;
+import com.bankingapp.root.dto.UserDTO;
 import com.bankingapp.root.entity.AccountEntity;
 
 public class AccountDTOEntityMapper {
@@ -18,6 +19,7 @@ public class AccountDTOEntityMapper {
         if(accountEntity.getUser() == null)
             throw new IllegalArgumentException("UserEntity in AccountEntity cannot be null");
         accountDTO.setUserId(accountEntity.getUser().getId());
+        accountDTO.setUser(UserDTOEntityMapper.map(accountEntity.getUser()));
         return accountDTO;
     }
 

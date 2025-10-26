@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SecureBank - Transfer Money</title>
-    <link rel="stylesheet" href="/css/styles.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <title>TrustWave - Transfer Money</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link th:href="@{https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css}" rel="stylesheet">
 </head>
 <body>
     <div class="dashboard-container">
@@ -23,7 +23,7 @@
                     <i class="fas fa-user-circle"></i>
                 </div>
                 <div class="profile-info">
-                    <h4 id="userName" th:text="|${user.getFirstName()} ${user.getLastName()} |"></h4>
+                    <h4 id="userName" th:text="|${user.getFirstName()} ${user.getLastName()}|"></h4>
                     <p id="userRole" th:text="${user.getUserRole()}"></p>
                 </div>
             </div>
@@ -60,101 +60,183 @@
                     <div class="form-container">
                         <div class="form-card">
                             <div class="form-header">
-                                <h2>Transfer Details</h2>
-                                <p>Please provide the transfer information</p>
+                                <h2><i class="fas fa-exchange-alt"></i> Transfer Details</h2>
+                                <p>Please provide the transfer information below</p>
                             </div>
                             
                             <form id="transferForm" class="transfer-form" th:object="${transferForm}" method="post" th:action="@{/transfer/create}">
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <<label for="fromAccount">From Account</label>
-                                        <select id="fromAccount" name="fromAccount" required th:field="*{fromAccount}">
-                                            <option value="" disabled selected>Select an account</option>
-                                            <option th:each="account : ${accounts}"
-                                                    th:value="${account.getAccountNumber()}"
-                                                    th:text="${account.getAccountNumber()}">
-                                            </option>
-                                        </select>
-                                        <div class="form-help">
-                                            <i class="fas fa-info-circle"></i>
-                                            <span>Choose the account to transfer money from</span>
+                                <!-- Account Selection Section -->
+                                <div class="form-section">
+                                    <h3 class="section-title">
+                                        <i class="fas fa-wallet"></i>
+                                        Account Information
+                                    </h3>
+                                    
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="fromAccount">
+                                                <i class="fas fa-credit-card"></i>
+                                                From Account
+                                            </label>
+                                            <div class="input-wrapper">
+                                                <i class="fas fa-university"></i>
+                                                <select id="fromAccount" name="fromAccount" required th:field="*{fromAccount}">
+                                                    <option value="" disabled selected>Select your account</option>
+                                                    <option th:each="account : ${accounts}"
+                                                            th:value="${account.getAccountNumber()}"
+                                                            th:text="${account.getAccountNumber() + ' - ' + account.getAccountType()}">
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            <div class="form-help">
+                                                <i class="fas fa-info-circle"></i>
+                                                <span>Choose the account to transfer money from</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="transferType">
+                                                <i class="fas fa-exchange-alt"></i>
+                                                Transfer Type
+                                            </label>
+                                            <div class="input-wrapper">
+                                                <i class="fas fa-route"></i>
+                                                <select id="transferType" name="transferType" th:field="*{transferType}" required>
+                                                    <option value="">Select transfer type</option>
+                                                    <option value="INTRA_BANK">Same Bank Transfer</option>
+                                                    <option value="INTER_BANK">Different Bank Transfer</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-help">
+                                                <i class="fas fa-info-circle"></i>
+                                                <span id="transferTypeHelp">Choose between same bank or different bank transfer</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Recipient Information Section -->
+                                <div class="form-section">
+                                    <h3 class="section-title">
+                                        <i class="fas fa-user"></i>
+                                        Recipient Information
+                                    </h3>
+                                    
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="toAccount">
+                                                <i class="fas fa-hashtag"></i>
+                                                Account Number
+                                            </label>
+                                            <div class="input-wrapper">
+                                                <i class="fas fa-credit-card"></i>
+                                                <input type="text" id="toAccount" name="toAccount" th:field="*{toAccount}" 
+                                                       placeholder="Enter recipient's account number" required>
+                                            </div>
+                                            <div class="form-help">
+                                                <i class="fas fa-info-circle"></i>
+                                                <span id="toAccountHelp">Enter the recipient's account number</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="beneficiaryName">
+                                                <i class="fas fa-user"></i>
+                                                Beneficiary Name
+                                            </label>
+                                            <div class="input-wrapper">
+                                                <i class="fas fa-user-circle"></i>
+                                                <input type="text" id="beneficiaryName" name="beneficiaryName" th:field="*{beneficiaryName}" 
+                                                       placeholder="Enter recipient's full name" required>
+                                            </div>
+                                            <div class="form-help">
+                                                <i class="fas fa-info-circle"></i>
+                                                <span>Enter the full name of the recipient</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Transfer Details Section -->
+                                <div class="form-section">
+                                    <h3 class="section-title">
+                                        <i class="fas fa-dollar-sign"></i>
+                                        Transfer Details
+                                    </h3>
+                                    
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="amount">
+                                                <i class="fas fa-money-bill-wave"></i>
+                                                Amount
+                                            </label>
+                                            <div class="input-wrapper">
+                                                <i class="fas fa-dollar-sign"></i>
+                                                <input type="number" id="amount" name="amount"
+                                                       step="0.01" value="0" placeholder="0.00" min="100" th:field="*{amount}" required>
+                                            </div>
+                                            <div class="form-help">
+                                                <i class="fas fa-info-circle"></i>
+                                                <span>Enter the amount you want to transfer</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="scheduleDate">
+                                                <i class="fas fa-calendar-alt"></i>
+                                                Schedule Date (Optional)
+                                            </label>
+                                            <div class="input-wrapper">
+                                                <i class="fas fa-clock"></i>
+                                                <input type="datetime-local" id="scheduleDate" name="scheduleDate" th:field="*{scheduledAt}">
+                                            </div>
+                                            <div class="form-help">
+                                                <i class="fas fa-info-circle"></i>
+                                                <span>Select a date and time to schedule the transfer</span>
+                                            </div>
                                         </div>
                                     </div>
                                     
                                     <div class="form-group">
-                                        <label for="transferType">Transfer Type</label>
-                                        <select id="transferType" name="transferType" th:field="*{transferType}" required>
-                                            <option value="">Select Transfer Type</option>
-                                            <option value="INTRA_BANK">Same Bank Transfer</option>
-                                            <option value="INTER_BANK">Different Bank Transfer</option>
-                                        </select>
+                                        <label for="description">
+                                            <i class="fas fa-comment"></i>
+                                            Description (Optional)
+                                        </label>
+                                        <div class="input-wrapper">
+                                            <i class="fas fa-edit"></i>
+                                            <textarea id="description" name="description" rows="3" th:field="*{description}" 
+                                                      placeholder="Add a note for this transfer"></textarea>
+                                        </div>
                                         <div class="form-help">
                                             <i class="fas fa-info-circle"></i>
-                                            <span>Choose between same bank or different bank transfer</span>
+                                            <span>Add a description to help identify this transfer</span>
                                         </div>
                                     </div>
                                 </div>
-                                
-                                <div class="form-group">
-                                    <label for="toAccount">To Account Number</label>
-                                    <input type="text" id="toAccount" name="toAccount" th:field="*{toAccount}" placeholder="Enter recipient's account number" required>
-                                    <div class="form-help">
-                                        <i class="fas fa-info-circle"></i>
-                                        <span>Enter the recipient's account number</span>
-                                    </div>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="beneficiaryName">Beneficiary Name</label>
-                                    <input type="text" id="beneficiaryName" name="beneficiaryName" th:field="*{beneficiaryName}" placeholder="Enter recipient's full name" required>
-                                    <div class="form-help">
-                                        <i class="fas fa-info-circle"></i>
-                                        <span>Enter the full name of the recipient</span>
-                                    </div>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="amount">Transfer Amount</label>
-                                    <div class="input-wrapper">
-                                        <i class="fas fa-dollar-sign"></i>
-                                        <input type="number" id="amount" name="amount" step="0.01" placeholder="0.00" th:field="*{amount}" required>
-                                    </div>
-                                    <div class="form-help">
-                                        <i class="fas fa-info-circle"></i>
-                                        <span>Enter the amount you want to transfer</span>
-                                    </div>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="description">Description (Optional)</label>
-                                    <textarea id="description" name="description" rows="3" th:field="*{description}" placeholder="Add a note for this transfer"></textarea>
-                                    <div class="form-help">
-                                        <i class="fas fa-info-circle"></i>
-                                        <span>Add a description to help identify this transfer</span>
+
+                                <!-- Terms and Conditions -->
+                                <div class="form-section">
+                                    <div class="form-group">
+                                        <label class="checkbox-wrapper">
+                                            <input type="checkbox" id="termsAccepted" required>
+                                            <span class="checkmark"></span>
+                                            <span class="checkbox-text">
+                                                I confirm that the transfer details are correct and I agree to the 
+                                                <a href="#" class="terms-link">Terms and Conditions</a>
+                                            </span>
+                                        </label>
                                     </div>
                                 </div>
 
-                                <div class="form-group">
-                                    <label for="scheduleDate">Schedule Date (Optional)</label>
-                                    <input type="datetime-local" id="scheduleDate" name="scheduleDate" th:field="*{scheduledAt}">
-                                    <div class="form-help">
-                                        <i class="fas fa-info-circle"></i>
-                                        <span>Select a date and time to schedule the transfer</span>
-                                    </div>
-                                </div>
-
-                                <div th:text="${errMessage}" style="color: #dc3545"></div>
-                                
-                                <div class="form-group">
-                                    <label class="checkbox-wrapper">
-                                        <input type="checkbox" id="termsAccepted" required>
-                                        <span class="checkmark"></span>
-                                        I confirm that the transfer details are correct and I agree to the <a href="#" class="link">Terms and Conditions</a>
-                                    </label>
+                                <!-- Error Message -->
+                                <div th:if="${errMessage}" class="error-message">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <span th:text="${errMessage}"></span>
                                 </div>
                                 
+                                <!-- Form Actions -->
                                 <div class="form-actions">
-                                    <a  class="btn btn-secondary" th:href="@{/customer/dashboard}">
+                                    <a th:href="@{/customer/dashboard}" class="btn btn-secondary">
                                         <i class="fas fa-times"></i>
                                         Cancel
                                     </a>
@@ -166,34 +248,44 @@
                             </form>
                         </div>
                         
-                        <!-- Transfer Information -->
+                        <!-- Transfer Information Card -->
                         <div class="info-card">
-                            <h3>Transfer Information</h3>
+                            <div class="info-header">
+                                <h3><i class="fas fa-info-circle"></i> Transfer Information</h3>
+                            </div>
                             <div class="info-list">
                                 <div class="info-item">
-                                    <i class="fas fa-clock"></i>
-                                    <div>
+                                    <div class="info-icon">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    <div class="info-content">
                                         <h4>Processing Time</h4>
                                         <p>Same bank: Instant<br>Different bank: 1-3 business days</p>
                                     </div>
                                 </div>
                                 <div class="info-item">
-                                    <i class="fas fa-shield-alt"></i>
-                                    <div>
+                                    <div class="info-icon">
+                                        <i class="fas fa-shield-alt"></i>
+                                    </div>
+                                    <div class="info-content">
                                         <h4>Security</h4>
                                         <p>All transfers are encrypted and monitored</p>
                                     </div>
                                 </div>
                                 <div class="info-item">
-                                    <i class="fas fa-dollar-sign"></i>
-                                    <div>
+                                    <div class="info-icon">
+                                        <i class="fas fa-dollar-sign"></i>
+                                    </div>
+                                    <div class="info-content">
                                         <h4>Fees</h4>
-                                        <p>Same bank: Free<br>Different bank: $2.50 fee</p>
+                                        <p>Same bank: Free<br>Different bank: LKR 2.50 fee</p>
                                     </div>
                                 </div>
                                 <div class="info-item">
-                                    <i class="fas fa-headset"></i>
-                                    <div>
+                                    <div class="info-icon">
+                                        <i class="fas fa-headset"></i>
+                                    </div>
+                                    <div class="info-content">
                                         <h4>Support</h4>
                                         <p>24/7 customer support available</p>
                                     </div>
@@ -208,29 +300,29 @@
 
     <script src="/js/animations.js"></script>
     <script>
-        
         // Handle transfer type change
         document.getElementById('transferType').addEventListener('change', function() {
-            const helpText = this.parentNode.querySelector('.form-help span');
+            const helpText = document.getElementById('transferTypeHelp');
+            const toAccountHelp = document.getElementById('toAccountHelp');
             const toAccountInput = document.getElementById('toAccount');
             
             if (this.value === 'INTRA_BANK') {
-                helpText.textContent = 'Transfer to another SecureBank account - Free and instant';
-                toAccountInput.placeholder = 'Enter SecureBank account number';
+                helpText.textContent = 'Transfer to another TrustWave account - Free and instant';
+                toAccountHelp.textContent = 'Enter TrustWave account number';
+                toAccountInput.placeholder = 'Enter TrustWave account number';
             } else if (this.value === 'INTER_BANK') {
-                helpText.textContent = 'Transfer to a different bank account - $2.50 fee, 1-3 business days';
+                helpText.textContent = 'Transfer to a different bank account - LKR 2.50 fee, 1-3 business days';
+                toAccountHelp.textContent = 'Enter external bank account number';
                 toAccountInput.placeholder = 'Enter external bank account number';
+            } else {
+                helpText.textContent = 'Choose between same bank or different bank transfer';
+                toAccountHelp.textContent = 'Enter the recipient\'s account number';
+                toAccountInput.placeholder = 'Enter recipient\'s account number';
             }
         });
-        
-        // Format amount input
-        document.getElementById('amount').addEventListener('input', function() {
-            let value = this.value;
-            if (value && !isNaN(value)) {
-                // Format to 2 decimal places
-                this.value = parseFloat(value).toFixed(2);
-            }
-        });
+
+        // Set minimum date to today for schedule date
+        document.getElementById('scheduleDate').setAttribute('min', new Date().toISOString().slice(0, 16));
     </script>
 </body>
 </html>

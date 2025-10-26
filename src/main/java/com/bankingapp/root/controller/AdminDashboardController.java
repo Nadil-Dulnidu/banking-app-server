@@ -1,10 +1,13 @@
 package com.bankingapp.root.controller;
 
 import com.bankingapp.root.dto.AccountDTO;
+import com.bankingapp.root.dto.AnnouncementRequestDTO;
 import com.bankingapp.root.dto.FundsTransferDTO;
+import com.bankingapp.root.dto.LoanApplicationDTO;
 import com.bankingapp.root.dto.UserDTO;
 import com.bankingapp.root.service.AccountService;
 import com.bankingapp.root.service.FundsTransferService;
+import com.bankingapp.root.service.LoanService;
 import com.bankingapp.root.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,13 +24,16 @@ public class AdminDashboardController {
     private final UserService userService;
     private final AccountService accountService;
     private final FundsTransferService fundsTransferService;
+    private final LoanService loanService;
 
     public AdminDashboardController(UserService userService,
                                     AccountService accountService,
-                                    FundsTransferService fundsTransferService) {
+                                    FundsTransferService fundsTransferService,
+                                    LoanService loanService) {
         this.userService = userService;
         this.accountService = accountService;
         this.fundsTransferService = fundsTransferService;
+        this.loanService = loanService;
     }
 
     @GetMapping("/dashboard")
@@ -42,6 +48,13 @@ public class AdminDashboardController {
         model.addAttribute("accounts", accounts);
         List<FundsTransferDTO> transfers = fundsTransferService.getAllTransfers();
         model.addAttribute("transfers", transfers);
+        List<LoanApplicationDTO> loanApplications = loanService.getAllLoanApplications();
+        model.addAttribute("loanApplications", loanApplications);
+        
+        // Add AnnouncementRequestDTO for the form
+        AnnouncementRequestDTO announcementRequestDTO = new AnnouncementRequestDTO();
+        model.addAttribute("announcementRequestDTO", announcementRequestDTO);
+        
         return "admin-dashboard";
     }
 }

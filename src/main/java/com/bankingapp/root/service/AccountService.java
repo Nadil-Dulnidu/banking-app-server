@@ -41,7 +41,7 @@ public class AccountService {
         }
         AccountEntity accountEntity = AccountDTOEntityMapper.map(account);
         accountEntity.setUser(userEntity);
-        String accountNumber = "AC" + System.currentTimeMillis();
+        String accountNumber = "" + System.currentTimeMillis();
         accountEntity.setAccountNumber(accountNumber);
         accountEntity.setStatus(Constants.AccountStatus.ACTIVE);
         accountRepository.save(accountEntity);
@@ -71,12 +71,20 @@ public class AccountService {
         AccountEntity updatedAcc = accountRepository.save(acc);
     }
 
-    public void deleteAccount(Integer id) {
+    public void closeAccount(Integer id) {
         AccountEntity acc = accountRepository.findById(id)
                 .orElseThrow(() -> new AccountException("Account not found"));
         if (acc.getBalance() != 0)
             throw new RuntimeException("Account balance must be zero before closing");
         acc.setStatus(Constants.AccountStatus.CLOSED);
         accountRepository.save(acc);
+    }
+
+    public void deleteAccount(Integer id) {
+        AccountEntity acc = accountRepository.findById(id)
+                .orElseThrow(() -> new AccountException("Account not found"));
+        if (acc.getStatus() != Constants.AccountStatus.CLOSED)
+            throw new RuntimeException("Account must be closed before deletion");
+        accountRepository.delete(acc);
     }
 }

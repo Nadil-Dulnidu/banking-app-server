@@ -23,4 +23,6 @@ public class AccountDTO {
     private Constants.AccountStatus status;
 
     private Integer userId;
+
+    private UserDTO user;
 }

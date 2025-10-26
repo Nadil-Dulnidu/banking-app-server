@@ -45,4 +45,24 @@ public class Constants {
         COMPLETED,
         FAILED
     }
+
+    public enum NotificationType {
+        ACCOUNT,
+        TRANSACTION,
+        BILLING,
+        SECURITY,
+        ANNOUNCEMENT
+    }
+
+    public enum LoanType {
+        HOME,
+        VEHICLE,
+        PERSONAL
+    }
+
+    public enum LoanStatus {
+        PENDING,
+        APPROVED,
+        REJECTED
+    }
 }

@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrustWave - Loan Application</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .loan-form-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: var(--primary-black);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loan-form-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .loan-form-header h1 {
+            color: var(--primary-orange);
+            margin-bottom: 0.5rem;
+        }
+
+        .loan-form-header p {
+            font-size: 1.1rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--primary-orange);
+            font-weight: 600;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-orange);
+            z-index: 1;
+        }
+
+        .input-wrapper input,
+        .input-wrapper select,
+        .input-wrapper textarea {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            background: var(--secondary-black);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-wrapper input:focus,
+        .input-wrapper select:focus,
+        .input-wrapper textarea:focus {
+            outline: none;
+            border-color: var(--primary-orange);
+            box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.1);
+        }
+
+        .input-wrapper textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-orange), #ff8c00);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #ff8c00, var(--primary-orange));
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 140, 0, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--secondary-black);
+            border: 2px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border-color);
+            color: white;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary-orange);
+            text-decoration: none;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #ff8c00;
+            transform: translateX(-5px);
+        }
+
+        .loan-info {
+            background: var(--secondary-black);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--primary-orange);
+        }
+
+        .loan-info h3 {
+            color: var(--primary-orange);
+            margin-bottom: 1rem;
+        }
+
+        .loan-info ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .loan-info li {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .loan-info li i {
+            color: var(--primary-orange);
+        }
+
+        /* Center the checkbox in loan application */
+        .loan-form-container .form-group:has(.checkbox-wrapper) {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 2rem 0;
+        }
+
+        .loan-form-container .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 1rem 1.5rem;
+            background: var(--secondary-black);
+            border-radius: 10px;
+            border: 1px solid var(--tertiary-black);
+        }
+
+        .loan-form-container .checkbox-wrapper:hover {
+            border-color: var(--primary-orange);
+        }
+
+        /* Center the main content area */
+        .main-content {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        /* Center the entire loan application section */
+        .content-sections {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .loan-form-container {
+                margin: 1rem;
+                padding: 1rem;
+            }
+
+            .terms-checkbox-wrapper {
+                max-width: 100%;
+                padding: 0.75rem;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="content-header">
+            <div class="header-left">
+                <a th:href="@{/customer/dashboard}" class="back-link">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Dashboard
+                </a>
+                <h1>Loan Application</h1>
+                <p>Apply for a loan with TrustWave Bank</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="loan-form-container">
+                <div class="loan-form-header">
+                    <h1><i class="fas fa-hand-holding-usd"></i> Loan Application</h1>
+                    <p>Fill out the form below to apply for a loan</p>
+                </div>
+
+                <div class="loan-info">
+                    <h3><i class="fas fa-info-circle"></i> Loan Information</h3>
+                    <ul>
+                        <li><i class="fas fa-check"></i> Competitive interest rates</li>
+                        <li><i class="fas fa-check"></i> Flexible repayment terms</li>
+                        <li><i class="fas fa-check"></i> Quick approval process</li>
+                        <li><i class="fas fa-check"></i> No hidden fees</li>
+                    </ul>
+                </div>
+
+                <form th:action="@{/loan/submit}" th:object="${loanApplication}" method="post">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="loanType">Loan Type</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-list"></i>
+                                <select id="loanType" th:field="*{loanType}" required>
+                                    <option value="">Select Loan Type</option>
+                                    <option value="HOME">Home Loan</option>
+                                    <option value="VEHICLE">Vehicle Loan</option>
+                                    <option value="PERSONAL">Personal Loan</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="amount">Loan Amount (LKR)</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-dollar-sign"></i>
+                                <input type="number" id="amount" th:field="*{amount}" 
+                                       placeholder="Enter loan amount" required 
+                                       min="1000" max="10000000" step="0.01">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="termMonths">Repayment Term (Months)</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-calendar-alt"></i>
+                                <input type="number" id="termMonths" th:field="*{termMonths}" 
+                                       placeholder="Enter term in months" required 
+                                       min="1" max="360">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="annualIncome">Annual Income (LKR)</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-chart-line"></i>
+                                <input type="number" id="annualIncome" th:field="*{annualIncome}" 
+                                       placeholder="Enter annual income" required 
+                                       min="0" step="0.01">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="purpose">Loan Purpose</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-file-alt"></i>
+                            <textarea id="purpose" th:field="*{purpose}" 
+                                      placeholder="Please describe the purpose of this loan in detail..." 
+                                      required rows="4"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-wrapper">
+                            <input type="checkbox" id="termsAgreement" required>
+                            <span class="checkmark"></span>
+                            <span class="checkbox-text">
+                                I confirm that the loan application details are correct and I agree to the 
+                                <a href="#" class="terms-link">Terms and Conditions</a>
+                            </span>
+                        </label>
+                    </div>
+
+                    <div style="color: #dc3545" th:text="${errMessage}"></div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i>
+                            Submit Application
+                        </button>
+                        <a th:href="@{/customer/dashboard}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i>
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Form validation
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+            const amountInput = document.getElementById('amount');
+            const termInput = document.getElementById('termMonths');
+            const incomeInput = document.getElementById('annualIncome');
+            const purposeInput = document.getElementById('purpose');
+
+            form.addEventListener('submit', function(e) {
+                let isValid = true;
+                let errorMessage = '';
+
+                // Validate amount
+                const amount = parseFloat(amountInput.value);
+                if (amount < 1000 || amount > 10000000) {
+                    isValid = false;
+                    errorMessage += 'Loan amount must be between LKR 1,000 and LKR 10,000,000.\n';
+                }
+
+                // Validate term
+                const term = parseInt(termInput.value);
+                if (term < 1 || term > 360) {
+                    isValid = false;
+                    errorMessage += 'Repayment term must be between 1 and 360 months.\n';
+                }
+
+                // Validate income
+                const income = parseFloat(incomeInput.value);
+                if (income <= 0) {
+                    isValid = false;
+                    errorMessage += 'Annual income must be greater than 0.\n';
+                }
+
+                // Validate purpose
+                if (purposeInput.value.trim().length < 10) {
+                    isValid = false;
+                    errorMessage += 'Please provide a detailed purpose (at least 10 characters).\n';
+                }
+
+                if (!isValid) {
+                    e.preventDefault();
+                    alert(errorMessage);
+                    return false;
+                }
+
+                // Show confirmation
+                if (!confirm('Are you sure you want to submit this loan application?')) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+
+            // Real-time validation feedback
+            amountInput.addEventListener('input', function() {
+                const amount = parseFloat(this.value);
+                if (amount < 1000 || amount > 10000000) {
+                    this.style.borderColor = '#ff4444';
+                } else {
+                    this.style.borderColor = '#28a745';
+                }
+            });
+
+            termInput.addEventListener('input', function() {
+                const term = parseInt(this.value);
+                if (term < 1 || term > 360) {
+                    this.style.borderColor = '#ff4444';
+                } else {
+                    this.style.borderColor = '#28a745';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

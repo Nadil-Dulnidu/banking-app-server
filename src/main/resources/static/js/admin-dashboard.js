@@ -383,7 +383,7 @@ class AdminDashboardManager {
         if (!container) return;
 
         const recentActivity = this.auditLogs.slice(0, 5);
-        
+
         container.innerHTML = recentActivity.map(log => `
             <div class="activity-item">
                 <div class="activity-icon">
@@ -491,7 +491,7 @@ class AdminDashboardManager {
         const userSelects = document.querySelectorAll('select[id*="User"], select[name*="userId"]');
         userSelects.forEach(select => {
             select.innerHTML = '<option value="">Select User</option>' +
-                this.users.map(user => 
+                this.users.map(user =>
                     `<option value="${user.id}">${user.firstName} ${user.lastName} (${user.username})</option>`
                 ).join('');
         });
@@ -499,7 +499,7 @@ class AdminDashboardManager {
 
     showSection(sectionName) {
         console.log('Switching to section:', sectionName);
-        
+
         // Hide all sections
         const sections = document.querySelectorAll('.content-section');
         console.log('Found sections:', sections.length);
@@ -523,7 +523,7 @@ class AdminDashboardManager {
     updatePageTitle(sectionName) {
         const pageTitle = document.getElementById('pageTitle');
         const pageSubtitle = document.getElementById('pageSubtitle');
-        
+
         const titles = {
             overview: { title: 'Admin Overview', subtitle: 'System administration and monitoring dashboard.' },
             users: { title: 'User Management', subtitle: 'Manage user accounts and permissions.' },
@@ -583,7 +583,7 @@ class AdminDashboardManager {
                                 user.email.toLowerCase().includes(searchTerm);
             const matchesRole = !roleFilter || user.userRole === roleFilter;
             const matchesStatus = !statusFilter || user.status === statusFilter;
-            
+
             return matchesSearch && matchesRole && matchesStatus;
         });
 
@@ -600,7 +600,7 @@ class AdminDashboardManager {
                                 account.ownerName.toLowerCase().includes(searchTerm);
             const matchesType = !typeFilter || account.accountType === typeFilter;
             const matchesStatus = !statusFilter || account.status === statusFilter;
-            
+
             return matchesSearch && matchesType && matchesStatus;
         });
 
@@ -620,7 +620,7 @@ class AdminDashboardManager {
             const matchesStatus = !statusFilter || transaction.status === statusFilter;
             const matchesType = !typeFilter || transaction.transferType === typeFilter;
             const matchesDate = !dateFilter || transaction.createdAt.toDateString() === new Date(dateFilter).toDateString();
-            
+
             return matchesSearch && matchesStatus && matchesType && matchesDate;
         });
 
@@ -639,7 +639,7 @@ class AdminDashboardManager {
             const matchesLevel = !levelFilter || log.level === levelFilter;
             const matchesAction = !actionFilter || log.action === actionFilter;
             const matchesDate = !dateFilter || log.timestamp.toDateString() === new Date(dateFilter).toDateString();
-            
+
             return matchesSearch && matchesLevel && matchesAction && matchesDate;
         });
 
@@ -751,11 +751,11 @@ class AdminDashboardManager {
     showModal(modalId) {
         const overlay = document.getElementById('modalOverlay');
         const modal = document.getElementById(modalId);
-        
+
         if (overlay && modal) {
             overlay.classList.add('active');
             modal.style.display = 'block';
-            
+
             // Add animation
             if (window.animationManager) {
                 window.animationManager.fadeIn(overlay);
@@ -767,15 +767,15 @@ class AdminDashboardManager {
     closeModal() {
         const overlay = document.getElementById('modalOverlay');
         const modals = document.querySelectorAll('.modal');
-        
+
         if (overlay) {
             overlay.classList.remove('active');
-            
+
             // Add animation
             if (window.animationManager) {
                 window.animationManager.fadeOut(overlay);
             }
-            
+
             setTimeout(() => {
                 modals.forEach(modal => modal.style.display = 'none');
             }, 300);
@@ -893,11 +893,83 @@ function exportAuditLogs() {
     // Implementation for exporting audit logs
 }
 
+function logout() {
+    console.log('Logging out...');
+
+    // Add logout animation with multiple effects
+    const dashboardContainer = document.querySelector('.dashboard-container');
+    const logoutButton = document.querySelector('.sidebar-footer .btn');
+
+    if (logoutButton) {
+        // Add click animation to button
+        logoutButton.style.transform = 'scale(0.95)';
+        logoutButton.style.background = 'linear-gradient(135deg, #ff6b35, #ff8c42)';
+
+        setTimeout(() => {
+            logoutButton.style.transform = 'scale(1)';
+        }, 150);
+    }
+
+    // Add fade out animation to entire dashboard
+    if (window.animationManager && dashboardContainer) {
+        window.animationManager.fadeOut(dashboardContainer);
+    }
+
+    // Add loading spinner during logout
+    const loadingOverlay = document.createElement('div');
+    loadingOverlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+    `;
+
+    loadingOverlay.innerHTML = `
+        <div style="
+            width: 60px;
+            height: 60px;
+            border: 3px solid #404040;
+            border-top: 3px solid #ff6b35;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        "></div>
+        <p style="color: #ff6b35; font-size: 18px; font-weight: 600;">Logging out...</p>
+        <style>
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        </style>
+    `;
+
+    document.body.appendChild(loadingOverlay);
+
+    // Show loading overlay
+    setTimeout(() => {
+        loadingOverlay.style.opacity = '1';
+    }, 10);
+
+    // Redirect to logout endpoint after animation
+    setTimeout(() => {
+        window.location.href = '/auth/logout';
+    }, 1000);
+}
+
 // Initialize admin dashboard manager when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM Content Loaded');
     // Check if we're on the admin dashboard page
-    if (window.location.pathname.includes('admin-dashboard.html') || 
+    if (window.location.pathname.includes('admin-dashboard.html') ||
         document.querySelector('.sidebar .logo h2')?.textContent?.includes('Admin')) {
         console.log('Initializing AdminDashboardManager...');
         window.adminDashboardManager = new AdminDashboardManager();
@@ -913,7 +985,7 @@ if (document.readyState === 'loading') {
 } else {
     // DOM is already loaded, initialize immediately
     console.log('Document already loaded, checking for admin dashboard...');
-    if (window.location.pathname.includes('admin-dashboard.html') || 
+    if (window.location.pathname.includes('admin-dashboard.html') ||
         document.querySelector('.sidebar .logo h2')?.textContent?.includes('Admin')) {
         if (!window.adminDashboardManager) {
             console.log('Initializing AdminDashboardManager immediately...');
@@ -924,8 +996,8 @@ if (document.readyState === 'loading') {
 
 // Force initialization after a short delay as a last resort
 setTimeout(() => {
-    if (!window.adminDashboardManager && 
-        (window.location.pathname.includes('admin-dashboard.html') || 
+    if (!window.adminDashboardManager &&
+        (window.location.pathname.includes('admin-dashboard.html') ||
          document.querySelector('.sidebar .logo h2')?.textContent?.includes('Admin'))) {
         console.log('Force initializing AdminDashboardManager...');
         window.adminDashboardManager = new AdminDashboardManager();

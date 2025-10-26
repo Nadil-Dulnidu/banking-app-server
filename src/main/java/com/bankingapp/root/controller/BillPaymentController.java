@@ -1,10 +1,13 @@
 package com.bankingapp.root.controller;
 
+import com.bankingapp.root.common.Constants;
 import com.bankingapp.root.dto.AccountDTO;
 import com.bankingapp.root.dto.BillPaymentDTO;
+import com.bankingapp.root.dto.NotificationDTO;
 import com.bankingapp.root.dto.UserDTO;
 import com.bankingapp.root.service.AccountService;
 import com.bankingapp.root.service.BillPaymentService;
+import com.bankingapp.root.service.NotificationService;
 import com.bankingapp.root.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,10 +27,13 @@ public class BillPaymentController {
     private final BillPaymentService billPaymentService;
     private final AccountService accountService;
     private  final UserService userService;
+    private final NotificationService notificationService;
 
     public BillPaymentController(BillPaymentService billPaymentService,
                                  AccountService accountService,
-                                 UserService userService) {
+                                 UserService userService,
+                                 NotificationService notificationService) {
+        this.notificationService = notificationService;
         this.userService = userService;
         this.billPaymentService = billPaymentService;
         this.accountService = accountService;
@@ -48,9 +54,18 @@ public class BillPaymentController {
 
     @PreAuthorize("hasRole('CUSTOMER')")
     @PostMapping("/create")
-    public String createBillPayment(@ModelAttribute("billPayment") @Valid BillPaymentDTO billPaymentDTO, RedirectAttributes redirectAttributes) {
+    public String createBillPayment(@ModelAttribute("billPayment") @Valid BillPaymentDTO billPaymentDTO, RedirectAttributes redirectAttributes, Principal principal) {
         try{
+            String username = principal.getName();
+            if (username == null) return "redirect:/auth/loginForm";
             billPaymentService.createPayment(billPaymentDTO);
+            NotificationDTO notificationDTO = new NotificationDTO(
+                    username,
+                    "Bill Payment Successful",
+                    Constants.NotificationType.BILLING,
+                    "Bill payment of amount " + billPaymentDTO.getAmount() + " to " + billPaymentDTO.getBillerName() + " scheduled successfully."
+            );
+            notificationService.sendNotification(notificationDTO);
             return "redirect:/customer/dashboard?billPaymentSuccess";
         }catch (RuntimeException ex){
             redirectAttributes.addFlashAttribute("errMessage", ex.getMessage());
